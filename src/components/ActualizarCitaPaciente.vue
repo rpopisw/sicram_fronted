@@ -1,6 +1,7 @@
 <template>
   <div>
     <!-- Page Content  -->
+    <ModEditarCita/>
     <div id="content">
       <div class="">
         <button type="button" id="sidebarCollapse" class=" boton-menu">
@@ -8,62 +9,105 @@
           <span>Menú</span>
         </button>
       </div>
-      <br>
       <div class="contenido">
-        <div class="container"
-        style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); background:white;"> 
+        <div
+          class="container"
+          style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); background:white;"
+        >
           <div
-            class="row "
+            class="row titulo"
             style="background:#0099a1; height:60px; align-content: center;"
           >
             <div class="col-12 text-center">
-              <h3 style="color:white">Mis Citas pendientes</h3>
+              <h3 style="color:white">Citas pendientes del {{ fecha }}</h3>
             </div>
           </div>
-          <table class="table table-striped table-hover mt-4"
-          style="border-style: solid; border-width: 2px; border-color: #f2f2f2;"
-          v-if="getListaCitasDoctor!=null">
-          <thead class="text-center">
-            <tr>
-              <th scope="col">Fecha</th>
-              <th scope="col">Rango Hora</th>
-              <th scope="col">Paciente</th>
-              <th scope="col">Estado</th>
-              <th scope="col">Acción</th>
-            </tr> 
-          </thead>
-          <tbody class="text-center">
-            <tr v-for="(element, index) in getListaCitasDoctor" :key="index">
-              <td>{{ element.horario.fecha }}</td>
-              <td>{{ element.horario.hora_inicio}} - {{ element.horario.hora_fin }}</td>
-              <td>{{ element.user.name }} {{ element.user.lastname }}</td>
-              <td>{{ element.estado }}</td>
-              <td >
-                <div class="boton-group">
-                  <button class="btn btn-success  mr-2"
-                  @click="cargar({aulaVirtual: element.aulaVirtual, name: element.user.name, lastname: element.user.lastname, doctor: getUsuario, id : element._id })">Ingresar</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="container" v-if="getListaCitasDoctor===null">
-              <div class="mt-3" style="padding:50px; align-content: center; text-align: center; background:pink">
-                  <h4>NO CUENTA CON CITAS PENDIENTES</h4>
-              </div>
+          <div class="lista-doctor" v-if="getListaCitas != null">
+            <div class="doctores">
+              <ul style="list-style:none">
+                <li v-for="(element, index) of getListaCitas" :key="index">
+                  <div class="row doctor">
+                    <div class="col-md-8">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <p class="mayusculas">
+                            <strong>Especialidad:</strong>
+                            {{ element.especialidad.especialidad }}
+                          </p>
+                          <p>
+                            <strong>Fecha: </strong> {{ element.horario.fecha }}
+                          </p>
+                          <p>
+                            <strong>Hora: </strong>
+                            {{ element.horario.hora_inicio }} -
+                            {{ element.horario.hora_fin }}
+                          </p>
+                          <p class="mayusculas">
+                            <strong>Doctor: </strong>
+                            {{ element.doctor.lastname }}
+                            {{ element.doctor.name }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 botones">
+                      <div>
+                        <button
+                          class="btn btn-md  btn-ingresar "
+                          @click="
+                            cargar({
+                              aulaVirtual: element.aulaVirtual,
+                              name: element.doctor.name,
+                              lastname: element.doctor.lastname,
+                            })
+                          "
+                        >
+                         <i class="fas fa-video fa-sm"></i> Ingresar
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          class="btn btn-md  btn-editar "
+                          @click="abrirEdicion(element)"
+                        >
+                          <i class="fas fa-list fa-sm"></i> Editar
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          class="btn  btn-md  btn-eliminar"
+                          @click="abrirEliminación(element)"
+                        >
+                          <i class="fas fa-times"></i> Eliminar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
-
-        <br>
+          <div class="container" v-if="getListaCitas === null">
+            <div
+              class="mt-3"
+              style="padding:50px; align-content: center; text-align: center; background:pink"
+            >
+              <h4>NO CUENTA CON CITAS REGISTRADAS</h4>
+            </div>
+            <br />
+          </div>
         </div>
-        
       </div>
+      <br />
     </div>
+    <simplert :useRadius="true" :useIcon="true" ref="simplert"> </simplert>
   </div>
 </template>
 
 <script>
+import ModEditarCita from "@/components/Modales/ModEditarCita.vue";
 import Vue from "vue";
-//Impor component mensaje 
+//Impor component mensaje
 import Simplert from "@/components/Simplert.vue";
 // Import component
 import Loading from "vue-loading-overlay";
@@ -73,18 +117,23 @@ import "vue-loading-overlay/dist/vue-loading.css";
 Vue.use(Loading);
 import { mapState, mapActions, mapGetters } from "vuex";
 export default {
-  name: "CitaPendienteDoctor",
+  name: "ActualizarCitaPaciente",
+  components: {
+    Simplert,
+    Loading,
+    ModEditarCita
+  },
   data() {
     return {
       mensaje: "",
       usuario: "",
       datosUsuario: {},
-      listaDeCitas: null
+      diaMin: new Date(),
+      diaMax: new Date(),
+      fecha: "",
+      cita: null,
+      listaDeCitas : null
     };
-  },
-  components: {
-    Simplert,
-    Loading,
   },
   mounted() {
     $("#sidebarCollapse").on("click", function() {
@@ -92,47 +141,139 @@ export default {
       $(".collapse.in").toggleClass("in");
       $("a[aria-expanded=true]").attr("aria-expanded", "false");
     });
-    this.getCitas();
+    this.getCita();
     console.log(this.listAtendida)
   },
   methods: {
-    ...mapActions(['setObjCita','listarCitasDoctor']),
+    ...mapActions(["setObjCita", "listCitas",'listarDependientes',"eliminarCitaPaciente","datosCita","listarHorariosDoctor"]),
     cargar(cita) {
       let loader = this.$loading.show({
         // Optional parameters
-        color: '#0099a1',
+        color: "#0099a1",
         container: this.fullPage ? null : this.$refs.formContainer,
         canCancel: false,
-        loader: 'dots',
+        loader: "dots",
         height: 150,
         width: 130,
       });
       // simulate AJAX
       setTimeout(() => {
         loader.hide();
-        this.ingresarCita(cita)
+        this.ingresarCita(cita);
       }, 3000);
+    }, //
+    MostrarFecha(fecha) {
+      var nombres_dias = new Array(
+        "Domingo",
+        "Lunes",
+        "Martes",
+        "Miércoles",
+        "Jueves",
+        "Viernes",
+        "Sábado"
+      );
+      var nombres_meses = new Array(
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+      );
+      const dia_mes = fecha.getDate(); //dia del mes
+      const dia_semana = fecha.getDay(); //dia de la semana
+      const mes = fecha.getMonth() + 1;
+      const anio = fecha.getFullYear();
+      var fechaHora = new Date();
+      var horas = fechaHora.getHours();
+      var minutos = fechaHora.getMinutes();
+      var segundos = fechaHora.getSeconds();
+      var sufijo = "AM";
+      if (horas > 12) {
+        horas = horas - 12;
+        sufijo = "PM";
+      }
+      if (horas < 10) {
+        horas = "0" + horas;
+      }
+      if (minutos < 10) {
+        minutos = "0" + minutos;
+      }
+      if (segundos < 10) {
+        segundos = "0" + segundos;
+      }
+      //escribe en pagina
+      return nombres_dias[dia_semana] + " " + dia_mes;
     },
-    getCitas() {
-      this.listarCitasDoctor(this.getUsuario)
-      console.log(this.getListaCitasDoctor)
+    setFecha(fecha1, fecha2) {
+      this.fecha =
+        this.MostrarFecha(fecha1) + " al " + this.MostrarFecha(fecha2);
+      console.log(this.fecha);
+    },
+    //MUESTRA LAS CITAS DEL PACIENTE
+    getCita() {
+      //LLAMA A LA FUNCION LISTAR CISTAS DE PACIENTE.JS
+      this.listCitas(this.getUsuario);
     },
     //INGRESA A LA CITA
-    ingresarCita(cita){
-      console.log(cita)
-      this.setObjCita(cita)
-      window.location.assign("/doctorvista/citadoctor")
-    }
-  },
+    ingresarCita(cita) { 
+      console.log(cita); 
+      this.setObjCita(cita);
+      window.location.assign('/pacientevista/citapaciente')
+    },
+  
+    //ABRE MODAL DE EDICION DE CITA
+    abrirEdicion(cita){
+      console.log("asdasd",cita.doctor)
+      let datos = {
+        id : cita.doctor._id
+      }
+      //cita.doctor.name = cita.doctor.name + " " + cita.doctor.lastname
+      this.listarHorariosDoctor(datos)
+      this.datosCita(cita)
+      this.$modal.show('mod-editar-cita')
+    },
+    //ABRE MODAL DE CONFIRAMCIÓN DE ELIMINACIÓN
+    abrirEliminación(cita) {
+      this.cita = cita;
+      this.$refs.simplert.openSimplert({
+        title: "CONFIRMAR ELIMINACIÓN",
+        message: "¿Seguro que desea proceder con la eliminación?",
+        type: "info",
+        useConfirmBtn: true,
+        onConfirm: this.eliminarCita,
+      });
+    },
+    //LLAMA A ELIMINAR CITA DE PACIENTE EN PACIENTE.JS
+    eliminarCita() {
+      console.log(this.cita);
+      let datos= {
+        paciente: this.getUsuario,
+        id_cita: this.cita._id
+      }
+      this.eliminarCitaPaciente(datos)
+      .then((res)=>{
+        this.$refs.simplert.openSimplert(this.getMensaje);
+        this.listCitas(this.getUsuario);
+      })
+    },
+  }, // 
   computed: {
-    ...mapState(["usuarioDoctor","idDoctor"]),
-    ...mapGetters(['getListaCitasDoctor','getUsuario']),
+    ...mapState(["usuarioPaciente", "idPaciente"]),
+    ...mapGetters(['getEspecialidades','getListFamiliares',"getUsuario", "getListaCitas","getMensaje"]),
     listAtendida(){
-      if(this.getListaCitasDoctor==null){
+      console.log("lista",this.getListaCitas)
+      if(this.getListaCitas==null){
         this.listaDeCitas = null
       }else{
         this.listaDeCitas = []
-        this.getListaCitasDoctor.forEach((element) => {
+        this.getListaCitas.forEach((element) => {
           if(element.estado == "pendiente"){
             this.listaDeCitas.push(element)
           }
@@ -145,17 +286,24 @@ export default {
       return this.listaDeCitas
     }
   },
+  beforeMount() {
+    this.diaMax.setDate(this.diaMax.getDate() + 7);
+    this.setFecha(this.diaMin, this.diaMax);
+    this.listarDependientes(this.getUsuario)
+  },
 };
 </script>
 
 <style scoped>
-/*content */
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 p {
   font-family: "Poppins", sans-serif;
-  font-size: 1.1em;
+  font-size: 1em;
   font-weight: 300;
-  line-height: 1.7em;
+  line-height: 1em;
+}
+.mayusculas {
+  text-transform: uppercase;
 }
 #sidebar ul li a,
 a:hover,
@@ -201,6 +349,64 @@ a:focus {
   position: relative;
   top: 10px;
 }
+.titulo {
+  text-align: center;
+  background: #0099a1;
+}
+.foto {
+  background: gray;
+  height: 150px;
+  border-radius: 15px;
+}
+.lista-doctor {
+  margin-top: 30px;
+  padding-bottom: 30px;
+}
+.doctor {
+  border-radius: 15px;
+  background: #67d9df;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  padding-left: 20px;
+  padding-top: 15px;
+  padding-bottom: 5px;
+}
+.botones {
+  text-align: center;
+}
+.btn-editar {
+  width: 150px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  background: rgb(75, 197, 75);
+  margin-bottom: 5px;
+  margin-top: 5px;
+  color: white;
+}
+.btn-editar:hover {
+  background: rgb(43, 161, 43);
+}
+.btn-ingresar {
+  width: 150px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  background: #407dc4;
+  margin-bottom: 5px;
+  color: white;
+}
+.btn-ingresar:hover {
+  background: #1869c5;
+}
+.btn-eliminar {
+  width: 150px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  color: white;
+  background: rgb(211, 65, 65);
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+.btn-eliminar:hover {
+  background: rgb(199, 21, 21);
+}
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
@@ -231,6 +437,23 @@ a:focus {
     border: none;
     margin-bottom: 15px;
   }
+  .titulo {
+    margin-top: 35px;
+    text-align: left;
+  }
+}
+@media (max-width: 425px) {
+  .titulo {
+    margin-top: 10px;
+    text-align: center;
+    height: 60px;
+  }
+  .btn-editar {
+    width: 200px;
+  }
+  .btn-eliminar {
+    width: 200px;
+  }
 }
 @media (max-width: 375px) {
   #sidebar {
@@ -256,9 +479,44 @@ a:focus {
     position: relative;
     margin-top: 30px;
   }
+  .titulo {
+    margin-top: 0px;
+    text-align: center;
+    height: 80px;
+  }
 }
-/*MODIFICAR CSS */
+/* ACTUALIZAR DATOS CSS*/
 .contenido {
-  padding: 0 20px;
+  padding: 0;
+}
+form {
+  padding: 50px;
+}
+label {
+  font-weight: 500;
+}
+.but {
+  background: #0099a1;
+  color: white;
+}
+.but:hover {
+  background: #01c2cc;
+  color: white;
+}
+@media (max-width: 375px) {
+  .contenido {
+    position: relative;
+    margin-top: 50px;
+  }
+  #content .boton-menu {
+    margin-right: 10px;
+  }
+  form {
+    margin-top: 30px;
+    padding: 0;
+  }
+  .btn {
+    margin-bottom: 10px;
+  }
 }
 </style>
