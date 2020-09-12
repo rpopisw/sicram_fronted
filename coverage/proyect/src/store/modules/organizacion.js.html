@@ -438,7 +438,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA CONSEGUIR DATOS DE LA ORGANIZACION
 <span class="fstat-no" title="function not covered" >    pe</span>rfilOrganizacion({commit},organizacion){
         let url =
-<span class="cstat-no" title="statement not covered" >        `https://sicramv1.herokuapp.com/api/organizacion/perfil/${organizacion.id}`;</span>
+<span class="cstat-no" title="statement not covered" >        `http://35.192.46.3/api/organizacion/perfil/${organizacion.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        axios</span>
         .get(url, {
           headers: {
@@ -462,7 +462,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA AGREGAR DOCTOR A LA ORGANIZACION
 <span class="fstat-no" title="function not covered" >    ag</span>regarNuevoDoctor({commit},datos){
 <span class="cstat-no" title="statement not covered" >        commit('setCargaOrganizacion',true)</span>
-        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/organizacion/doctor/registrar/${datos.organizacion.id}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`http://35.192.46.3/api/organizacion/doctor/registrar/${datos.organizacion.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        return axios</span>
         .post(
           url,
@@ -495,7 +495,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA LISTAR DOCTORES DE LA ORGANIZACION
 <span class="fstat-no" title="function not covered" >    li</span>starDoctores({commit},organizacion){
 <span class="cstat-no" title="statement not covered" >        console.log(organizacion)</span>
-        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/organizacion/doctor/obtener/${organizacion.id}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`http://35.192.46.3/api/organizacion/doctor/obtener/${organizacion.id}`;</span>
 <span class="cstat-no" title="statement not covered" >            axios</span>
             .get(
                 url,

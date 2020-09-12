@@ -69,6 +69,8 @@
       ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest",
       "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
     },
-    "transformIgnorePatterns": ["/node_modules/"]
+    "transformIgnorePatterns": [
+      "/node_modules/"
+    ]
   }
 }

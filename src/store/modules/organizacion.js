@@ -117,7 +117,7 @@ const actions = {
     //CONSULTA CONSEGUIR DATOS DE LA ORGANIZACION
     perfilOrganizacion({commit},organizacion){
         let url =
-        `https://sicramv1.herokuapp.com/api/organizacion/perfil/${organizacion.id}`;
+        `http://35.192.46.3/api/organizacion/perfil/${organizacion.id}`;
         axios
         .get(url, {
           headers: {
@@ -136,7 +136,7 @@ const actions = {
     //CONSULTA ACTUALIZAR DATOS DE LA ORGANIZACION
     actualizarOrganizacion({commit},datos){
       commit('setCargaOrganizacion',true)
-        let url = `https://sicramv1.herokuapp.com/api/organizacion/perfil/update/${datos.organizacion.id}`;
+        let url = `http://35.192.46.3/api/organizacion/perfil/update/${datos.organizacion.id}`;
         return axios
         .post(
           url,
@@ -163,7 +163,7 @@ const actions = {
     //CONSULTA AGREGAR DOCTOR A LA ORGANIZACION
     agregarNuevoDoctor({commit},datos){
         commit('setCargaOrganizacion',true)
-        let url = `https://sicramv1.herokuapp.com/api/organizacion/doctor/registrar/${datos.organizacion.id}`;
+        let url = `http://35.192.46.3/api/organizacion/doctor/registrar/${datos.organizacion.id}`;
         return axios
         .post(
           url,
@@ -196,7 +196,7 @@ const actions = {
     //CONSULTA LISTAR DOCTORES DE LA ORGANIZACION
     listarDoctores({commit},organizacion){
         console.log(organizacion)
-        let url = `https://sicramv1.herokuapp.com/api/organizacion/doctor/obtener/${organizacion.id}`;
+        let url = `http://35.192.46.3/api/organizacion/doctor/obtener/${organizacion.id}`;
             axios
             .get(
                 url,
@@ -253,7 +253,7 @@ const actions = {
     //CONSULTA PARA ELIMINAR AL DOCTOR SELECCIONADO
     eliminarDoctorOrg({commit},datos){
       commit('setCargaDoctor',true)
-      let url = `https://sicramv1.herokuapp.com/api/organizacion/doctor/eliminar/${datos.doctor.id}`;
+      let url = `http://35.192.46.3/api/organizacion/doctor/eliminar/${datos.doctor.id}`;
       return axios
         .post(
           url,

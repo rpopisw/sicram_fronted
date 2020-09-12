@@ -125,7 +125,7 @@ const actions = {
     //CONSULTA DEL PERFIL DOCTOR
     perfilDoctor({commit},doctor){
         let url =
-        `https://sicramv1.herokuapp.com/api/doctor/perfil/${doctor.id}`;
+        `http://35.192.46.3/api/doctor/perfil/${doctor.id}`;
         axios
         .get(url, {
           headers: {
@@ -144,7 +144,7 @@ const actions = {
     //CONSULTA DE ACTUALIZAR LOS DATOS DEL DOCTOR 
     actualizarDatosDoctor({commit},datos){
         commit('setCargaDoctor',true)
-        let url = `https://sicramv1.herokuapp.com/api/doctor/perfil/update/${datos.doctor.id}`;
+        let url = `http://35.192.46.3/api/doctor/perfil/update/${datos.doctor.id}`;
         return axios
           .post(
             url,
@@ -182,7 +182,7 @@ const actions = {
     //CONSULTA NUEVO HORARIO DE ATENCION 
     registrarHorarioDoctor({commit},datos){
         commit('setCargaDoctor',true)
-        let url = `https://sicramv1.herokuapp.com/api/doctor/horario/agregar/${datos.doctor.id}`;
+        let url = `http://35.192.46.3/api/doctor/horario/agregar/${datos.doctor.id}`;
         return axios
           .post(
             url,
@@ -217,7 +217,7 @@ const actions = {
     listarHorariosDoctor({commit,state},doctor){
       
         axios
-        .get(`https://sicramv1.herokuapp.com/api/doctor/horarios/${doctor.id}`)
+        .get(`http://35.192.46.3/api/doctor/horarios/${doctor.id}`)
 
         .then((res) => {
             console.log(res)
@@ -240,7 +240,7 @@ const actions = {
     //CONSULTA PARA LISTAR HORARIOS DE ATENCION OCUPADOS
     listarHorariosOcupadosDoctor({commit},doctor){
       axios
-      .get(`https://sicramv1.herokuapp.com/api/doctor/horarios_ocupados/${doctor.id}`)
+      .get(`http://35.192.46.3/api/doctor/horarios_ocupados/${doctor.id}`)
 
       .then((res) => {
           console.log(res)
@@ -290,7 +290,7 @@ const actions = {
     //CONSULTA PARA ELIMINAR EL HORARIO DE ATENCIÓN
     eliminarHorarioDoctor({commit},datos){
       commit('setCargaDoctor',true)
-      let url = `https://sicramv1.herokuapp.com/api/doctor/horario/eliminar/${datos.doctor.id}`;
+      let url = `http://35.192.46.3/api/doctor/horario/eliminar/${datos.doctor.id}`;
       return axios
         .post(
           url,
@@ -326,7 +326,7 @@ const actions = {
     //CONSULTA LISTAR CITAS DE ATENCION
     listarCitasDoctor({commit},doctor){
         let url =
-        `https://sicramv1.herokuapp.com/api/doctor/cita/listar/${doctor.id}`;
+        `http://35.192.46.3/api/doctor/cita/listar/${doctor.id}`;
         axios
         .get(url, {
           headers: {
