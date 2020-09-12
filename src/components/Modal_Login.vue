@@ -95,10 +95,11 @@
           <div class="form-row">
             <div class="form-group col-md-6">
               <input
-                style="text-transform:uppercase;"
-                type="text"
+                type="number"
+                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                maxlength = "8"
                 class="form-control"
-                id="inputDni"
+                id="dniPaciente"
                 v-model="$v.user.dni.$model"
                 placeholder="DNI"
               />
@@ -138,7 +139,9 @@
               <input
                 type="number"
                 class="form-control"
-                id="inputCelular"
+                id="celularPaciente"
+                oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                maxlength = "9"
                 v-model="$v.user.celular.$model"
                 placeholder="Número de celular"
               />
@@ -146,9 +149,6 @@
             
           </div>
           <br />
-          <div class="alert alert-danger" role="alert" v-if="carga != true">
-            <div class="label">{{mensaje}}</div>
-          </div>
           <hr />
           <div class="row justify-content-center">
             <div class="col-12 col-sm-10 col-xl-6 text-center">
@@ -163,18 +163,21 @@
         </div>
         <br />
       </form>
+      <simplert :useRadius="true" :useIcon="true" ref="simplert"> </simplert>
     </div>
   </modal>
 </template>
 <script>
+import Simplert from "@/components/Simplert.vue";
 import axios from "axios";
 import qs from "qs";
 import { required, minLength, email } from "vuelidate/lib/validators";
 const MODAL_WIDTH = 800;
-
 export default {
   name: "DemoLoginModal",
-  
+  components:{
+      Simplert
+  },
   data() {
     return {
       mensajeRegistro:"",
@@ -236,6 +239,9 @@ export default {
     },
   },
   methods: {
+    cerrar(){
+      this.$modal.hide("demo-login");
+    },
     registrarPaciente(user) {
       this.user = user;
       const config = {
@@ -246,24 +252,36 @@ export default {
       this.carga2 = true;
       
       this.axios
-        .post("http://35.192.46.3/api/signupuser", {
+        .post("https://sicramv1.herokuapp.com/api/signupuser", {
           ...this.user
         }) //elemento spreat
         //agrega al obejto json al contenido que agregamos, seria como un solo json de todos los parámetros
-
         .then((res) => {
           if(res.data.msg==="Username ya existe."){
-            this.mensaje = "Este usuario se encuentra registrado"
             this.carga = false;
             this.carga2 = false;
+            this.$refs.simplert.openSimplert({
+              title: "REGISTRO FALLIDO",
+              message: "Este paciente ya se encuentra registrado",
+              type: "error",
+            })
           }else{
+            this.$refs.simplert.openSimplert({
+              title: "REGISTRO EXITOSO",
+              message: "Paciente registrado con éxito",
+              type: "success",
+              onClose: this.cerrar
+            })
             this.carga = true;
-            this.$modal.hide("demo-login");
             this.carga2 = false;
           }
         })
         .catch((e) => {
-          this.mensaje = "Este usuario se encuentra registrado"
+          this.$refs.simplert.openSimplert({
+              title: "REGISTRO FALLIDO",
+              message: "Ocurrió un error al registrar al paciente.",
+              type: "error",
+            })
           this.carga = false;
           this.carga2 = false;
         });
@@ -275,7 +293,6 @@ export default {
 $background_color: #404142;
 $github_color: #dba226;
 $facebook_color: #3880ff;
-
 .box {
   background: white;
   overflow: hidden;
@@ -286,19 +303,16 @@ $facebook_color: #3880ff;
   box-shadow: 0 0 40px black;
   color: #025f8ace;
   font-size: 0;
-
   .box-messages {
     position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;
   }
-
   .box-error-message {
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
-
     height: 0;
     line-height: 32px;
     padding: 0 12px;
@@ -308,7 +322,6 @@ $facebook_color: #3880ff;
     color: white;
     background: #f38181;
   }
-
   .but {
   background: #60b9cf;
   color: white;
@@ -342,7 +355,6 @@ $facebook_color: #3880ff;
     background-color: #03a8f4d5;
     color: white;
   }
-
   button {
     background: white;
     border-radius: 4px;
@@ -364,11 +376,9 @@ $facebook_color: #3880ff;
       color: mix(#8b8c8d, black, 80%);
     }
   }
-
   .large-btn {
     width: 100%;
     background: white;
-
     span {
       font-weight: 600;
     }
@@ -376,16 +386,13 @@ $facebook_color: #3880ff;
       color: white !important;
     }
   }
-
   .button-set {
     margin-bottom: 8px;
   }
-
   #register-btn,
   #signin-btn {
     margin-left: 8px;
   }
-
   .facebook-btn {
     border-color: $facebook_color;
     color: $facebook_color;
@@ -394,7 +401,6 @@ $facebook_color: #3880ff;
       background: $facebook_color;
     }
   }
-
   .github-btn {
     border-color: $github_color;
     color: $github_color;
@@ -403,7 +409,6 @@ $facebook_color: #3880ff;
       background: $github_color;
     }
   }
-
   .autocomplete-fix {
     position: absolute;
     visibility: hidden;
@@ -415,18 +420,13 @@ $facebook_color: #3880ff;
     top: 0;
   }
 }
-
 .pop-out-enter-active,
 .pop-out-leave-active {
   transition: all 0.5s;
 }
-
 .pop-out-enter,
 .pop-out-leave-active {
   opacity: 0;
   transform: translateY(24px);
 }
-
-
-
 </style>

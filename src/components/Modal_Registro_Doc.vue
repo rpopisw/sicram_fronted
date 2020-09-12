@@ -101,7 +101,9 @@
                 <div class="form-row">
                   <div class="form-group col-md-6">
                     <input
-                      type="text"
+                      type="number"
+                      oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                      maxlength = "8"
                       class="form-control"
                       id="inputDni"
                       v-model="$v.doctor.dni.$model"
@@ -111,6 +113,8 @@
                    <div class="form-group col-md-6">
                     <input
                       type="number"
+                      oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                      maxlength = "9"
                       class="form-control"
                       id="inputtelefono"
                       v-model="$v.doctor.celular.$model"
@@ -197,9 +201,6 @@
               >
             </div>
           </div>
-          <div class="alert alert-danger" role="alert" v-if="carga != true">
-            <div class="label">{{ mensaje }}</div>
-          </div>
           <br />
           <hr />
           <div class="row justify-content-center">
@@ -214,21 +215,22 @@
           </div>
         </form>
       </div>
-
+      <simplert :useRadius="true" :useIcon="true" ref="simplert"> </simplert>
       <!--ends -->
     </div>
   </modal>
 </template>
 <script>
+import Simplert from "@/components/Simplert.vue";
 import vueCustomScrollbar from "vue-custom-scrollbar";
 import { required, minLength, email } from "vuelidate/lib/validators";
 import { mapGetters } from 'vuex';
 const MODAL_WIDTH = 800;
-
 export default {
   name: "Modal_Registro_Doc",
   components: {
     vueCustomScrollbar,
+    Simplert
   },
   data() {
     return {
@@ -280,8 +282,10 @@ export default {
       especialidad: { required },
     },
   },
-
   methods: {
+    cerrar(){
+      this.$modal.hide("demo-registro-doc");
+    },
     closeByEvent() {
       this.$modal.hide("demo-registro-doc");
     },
@@ -289,39 +293,53 @@ export default {
       console.log(evt);
     },
     //...mapActions(['iniciarUsuario']),
-
     registrarDoctor(doctor) {
       this.carga2 = true;
       this.doctor = doctor;
       console.log(doctor.especialidad);
       console.log(doctor)
       this.axios
-        .post("http://35.192.46.3/api/signupdoctor", {
+        .post("https://sicramv1.herokuapp.com/api/signupdoctor", {
           ...this.doctor,
         }) //elemento spreat
         //agrega al obejto json al contenido que agregamos, seria como un solo json de todos los parámetros
-
         .then((res) => {
           if(res.data.msg==="Username ya existe."){
-              this.mensaje = "Este usuario se encuentra registrado"
               this.carga = false;
               this.carga2 = false;
+              this.$refs.simplert.openSimplert({
+              title: "REGISTRO FALLIDO",
+              message: "Este doctor ya se encuentra registrado",
+              type: "error",
+            })
           }else if(res.data.msg=="LLene los nombres y apellidos, completos y CORRECTOS del doctor"){
-              this.mensaje = "¡Los datos registrados no coinciden con el CMP!"
+              this.$refs.simplert.openSimplert({
+              title: "REGISTRO FALLIDO",
+              message: "LLene los nombres y apellidos, completos y CORRECTOS del doctor",
+              type: "error",
+              })
               this.carga = false;
               this.carga2 = false;
           }else{
             this.carga = true;
-            this.$modal.hide("demo-registro-doc");
             this.carga2 = false;
+            this.$refs.simplert.openSimplert({
+              title: "REGISTRO EXITOSO",
+              message: "Doctor registrado con éxito",
+              type: "success",
+              onClose: this.cerrar
+            })
           }
           
         })
         .catch((e) => {
-          this.mensaje = "Usuario ya registrado";
-          console.log(e)
           this.carga = false;
           this.carga2 = false;
+          this.$refs.simplert.openSimplert({
+              title: "REGISTRO FALLIDO",
+              message: "Ocurrió un error al registrar al Doctor.",
+              type: "error",
+          })
         });
     },
   },
@@ -334,7 +352,6 @@ export default {
 $background_color: #404142;
 $github_color: #dba226;
 $facebook_color: #3880ff;
-
 .box {
   background: white;
   overflow: hidden;
@@ -345,7 +362,6 @@ $facebook_color: #3880ff;
   box-shadow: 0 0 40px black;
   color: #025f8ace;
   font-size: 0;
-
   .label {
     width: 100%;
     height: 100%;
@@ -353,29 +369,24 @@ $facebook_color: #3880ff;
     color: #494949;
     font-weight: bold;
   }
-
   .box-messages {
     position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;
   }
-
   .box-error-message {
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
-
     height: 0;
     line-height: 32px;
     padding: 0 12px;
     text-align: center;
     width: 100%;
     font-size: 11px;
-
     background: #f38181;
   }
-
   .butn {
     background-color: transparent;
     text-transform: uppercase;
@@ -393,7 +404,6 @@ $facebook_color: #3880ff;
     background-color: #03a8f4d5;
     color: white;
   }
-
   button {
     background: white;
     border-radius: 4px;
@@ -415,11 +425,9 @@ $facebook_color: #3880ff;
       color: mix(#8b8c8d, black, 80%);
     }
   }
-
   .large-btn {
     width: 100%;
     background: white;
-
     span {
       font-weight: 600;
     }
@@ -427,16 +435,13 @@ $facebook_color: #3880ff;
       color: white !important;
     }
   }
-
   .button-set {
     margin-bottom: 8px;
   }
-
   #register-btn,
   #signin-btn {
     margin-left: 8px;
   }
-
   .facebook-btn {
     border-color: $facebook_color;
     color: $facebook_color;
@@ -445,7 +450,6 @@ $facebook_color: #3880ff;
       background: $facebook_color;
     }
   }
-
   .github-btn {
     border-color: $github_color;
     color: $github_color;
@@ -454,7 +458,6 @@ $facebook_color: #3880ff;
       background: $github_color;
     }
   }
-
   .autocomplete-fix {
     position: absolute;
     visibility: hidden;
@@ -466,12 +469,10 @@ $facebook_color: #3880ff;
     top: 0;
   }
 }
-
 .pop-out-enter-active,
 .pop-out-leave-active {
   transition: all 0.5s;
 }
-
 .pop-out-enter,
 .pop-out-leave-active {
   opacity: 0;

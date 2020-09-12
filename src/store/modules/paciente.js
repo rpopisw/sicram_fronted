@@ -6,6 +6,7 @@ const state = {
     datosPaciente : null, //DATOS DEL PACIENTE
     listFamiliares : null, //LISTA DE FAMILIARES DEL PACIENTE
     listaCitas: null, //LISTA DE CITAS DEL PACIENTE
+    listaCitasPasadas: null, //LISTA DE CITAS DEL PACIENTE PASADAS
     mensaje: null, //MENSAJE DE ACTUALIZACION
     carga: false, //CARGA DE BOTONES
     datosFamiliar: null, //DATOS DEL DEPENDIENTE
@@ -55,6 +56,10 @@ const mutations = {
     //PONE LA LISTA DE LAS CITAS
     setListaCitas(state,payload){
         state.listaCitas = payload
+    },
+    //PONE LA LISTA DE LAS CITAS PASADAS
+    setListaCitasPasadas(state,payload){
+      state.listaCitasPasadas = payload
     },
     //PONE LOS DATOS DEL MENSAJE
     setMensajeNegativo(state){
@@ -133,7 +138,7 @@ const actions = {
     //CONSULTA DEL PERFIL PACIENTE
     getPerfilPaciente({commit},paciente){
         let url =
-        `http://35.192.46.3/api/user/perfil/${paciente.id}`;
+        `https://sicramv1.herokuapp.com/api/user/perfil/${paciente.id}`;
         axios
         .get(url, {
           headers: {
@@ -152,7 +157,7 @@ const actions = {
     //CONSULTA DE ACTUALIZAR LOS DATOS DEL PACIENTE 
     actualizarDatosPaciente({commit},datos){
         commit('setCarga',true)
-        let url = `http://35.192.46.3/api/user/perfil/update/${datos.paciente.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/perfil/update/${datos.paciente.id}`;
         return axios
           .post(
             url,
@@ -181,7 +186,7 @@ const actions = {
     //CONSULTA NUEVO PACIENTE DEPENDIENTE
     registrarPacienteDependiente({commit},datos){
         commit('setCarga',true)
-        let url = `http://35.192.46.3/api/user/dependiente/agregar/${datos.paciente.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/dependiente/agregar/${datos.paciente.id}`;
         return axios
           .post(
             url,
@@ -213,7 +218,7 @@ const actions = {
 
     //CONSULTA LISTAR DEPENDIENTES
     listarDependientes({commit},paciente){
-        let url = `http://35.192.46.3/api/user/dependiente/listar/${paciente.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/dependiente/listar/${paciente.id}`;
         axios
           .get(
             url,
@@ -240,7 +245,7 @@ const actions = {
     //CONSULTA AGREGAR CITA DEL PACIENTE TITULAR
     agregarCitaPaciente({commit},datos){
         commit('setCarga',true)
-        let url = `http://35.192.46.3/api/user/cita/crear/${datos.paciente.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/cita/crear/${datos.paciente.id}`;
         return axios
             .post(
               url,
@@ -273,7 +278,7 @@ const actions = {
     //CONSULTA AGREGAR CITA DEL PACIENTE DEPENDIENTE
     agregarCitaDependiente({commit},datos){
         commit('setCarga',true)
-        let url = `http://35.192.46.3/api/user/dependiente/cita/crear/${datos.idFamiliar}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/dependiente/cita/crear/${datos.idFamiliar}`;
         return axios
             .post(
               url,
@@ -305,7 +310,7 @@ const actions = {
     //CONSULTA LISTAR CITAS 
     listCitas({commit},paciente){
         let url =
-        `http://35.192.46.3/api/user/cita/listar/${paciente.id}`;
+        `https://sicramv1.herokuapp.com/api/user/cita/listar/${paciente.id}`;
         axios
         .get(url, {
           headers: {
@@ -313,12 +318,26 @@ const actions = {
           },
         })
         .then((res) => {
-            console.log(res)
-            if(res.data.length!=0){
-                commit('setListaCitas',res.data)
-            }else{
-                commit('setListaCitas',null)
+          console.log(res)
+          if(res.data.length!=0){
+            state.listaCitas = []
+            state.listaCitasPasadas = []
+            res.data.forEach((element) => {
+              if(element.estado == "pendiente"){
+                state.listaCitas.push(element)
+              }else if(element.estado == "atendido"){
+                state.listaCitasPasadas.push(element)
+              }
+            });
+            if(state.listaCitas.length==0) {
+              commit('setListaCitas',null)
+            }else if(state.listaCitasPasadas.length==0){
+              commit('setListaCitasPasadas',null)
             }
+          }else{
+              commit('setListaCitas',null)
+              commit('setListaCitasPasadas',null)
+          }
         })
         .catch((e) => {
            console.log(e) 
@@ -328,7 +347,7 @@ const actions = {
     //CONSULTA PARA ACTUALIZAR LOS DATOS DEL FAMILIAR
     actualizarFamiliar({commit,dispatch},datos){
       commit('setCarga',true)
-        let url = `http://35.192.46.3/api/user/dependiente/modificar/${datos.paciente.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/dependiente/modificar/${datos.paciente.id}`;
          return axios
             .post(
               url,
@@ -354,7 +373,7 @@ const actions = {
     //CONSULTA PARA ELIMINAR ALGÚN FAMILIAR
     eliminarFamiliar({commit},datos){
       commit('setCarga',true)
-        let url = `http://35.192.46.3/api/user/dependiente/eliminar/${datos.paciente.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/dependiente/eliminar/${datos.paciente.id}`;
          return axios
             .post(
               url,
@@ -396,7 +415,7 @@ const actions = {
     //CONSULTA PARA ACTUALIZAR LOS DATOS DE LA CITA
     actualizarCitaPaciente({commit},datos){
       commit('setCarga',true)
-        let url = `http://35.192.46.3/api/user/cita/actualizar/${datos.paciente.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/cita/actualizar/${datos.paciente.id}`;
         return axios
             .post(
               url,
@@ -432,7 +451,7 @@ const actions = {
     //CONSULTA PARA ELIMINAR UNA CITA
     eliminarCitaPaciente({commit},datos){
       commit('setCarga',true)
-        let url = `http://35.192.46.3/api/user/cita/eliminar/${datos.paciente.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/user/cita/eliminar/${datos.paciente.id}`;
           return axios
             .post(
               url,

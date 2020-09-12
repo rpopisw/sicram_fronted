@@ -36,7 +36,7 @@ export default {
     };
   }, 
   methods: {
-    ...mapActions(['obtenerCita']),
+    ...mapActions(['obtenerCita',"citaAtendida"]),
     colgarLlamada() {
       let obj2 = {
         title: "SALIR DE LA SESIÓN",
@@ -48,25 +48,22 @@ export default {
       this.$refs.simplert1.openSimplert(obj2);
     },
     salir() {
-      window.location.assign("/doctorvista")
-      /*let url = `https://proyectocalidad9.herokuapp.com/cita/actualizar_estado/${this.idCita}`;
-      this.axios.post(url, {
-        estado: "Atendido",
-      })
+      let datos = {
+        doctor : this.cita.doctor,
+        estado : 'atendido',
+        id_cita : this.cita.id,
+      }
+      this.citaAtendida(datos)
       .then((res)=>{
         window.location.assign("/doctorvista")
       })
-      .catch((e)=>{
-        console.log("sucedio un error")
-      })*/
-      
     },
   },
   created(){
       this.obtenerCita()
   },
   computed: {
-    ...mapState(["idCita"]),
+    ...mapState(["idCita","getUsuario","cita"]),
   },
 };
 </script>
@@ -86,13 +83,11 @@ export default {
 .sesion {
   box-shadow: 0 0 7px 3px rgb(105, 110, 110);
 }
-
 .videollamada {
   background-color: #000000;
   height: 65vh;
   border: 1px solid;
 }
-
 .botonSalir {
   text-align: center;
   height: 13vh;
@@ -111,7 +106,6 @@ export default {
       box-shadow: 0 0 5px 3px rgb(86, 90, 90);
     }
   }
-
   .cita {
     box-shadow: 0 0 5px 3px rgb(168, 179, 179);
     border-radius: 100%;
@@ -126,7 +120,6 @@ export default {
     }
   }
 }
-
 @media (max-width: 768px) {
   .citaPaciente {
     padding-left: 10px;
@@ -136,7 +129,6 @@ export default {
     text-align: center;
   }
 }
-
 @media (max-width: 425px) {
   .citaPaciente {
     padding-left: 3px;
