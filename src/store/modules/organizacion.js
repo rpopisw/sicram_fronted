@@ -222,7 +222,7 @@ const actions = {
     //CONSULTA PARA ACTUALIZAR LOS DATOS DEL DOCTOR
     actualizarDoctorOrg({commit},datos){
        // commit('setCargaDoctor',true)
-      let url = `http://sicramv1.herokuapp.com/api/doctor/horario/modificar/${datos.doctor.id}`;
+      let url = `http://35.192.46.3/api/doctor/horario/modificar/${datos.doctor.id}`;
       axios
         .post(
           url,
