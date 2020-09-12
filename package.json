@@ -1,0 +1,74 @@
+{
+  "name": "proyect",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@fullcalendar/daygrid": "^5.1.0",
+    "@fullcalendar/interaction": "^5.1.0",
+    "@fullcalendar/vue": "^5.1.0",
+    "@opentok/client": "^2.17.7",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.5.0",
+    "bootstrap-vue": "^2.15.0",
+    "core-js": "^3.6.5",
+    "jquery": "^3.5.1",
+    "qs": "^6.9.4",
+    "vue": "^2.6.11",
+    "vue-axios": "^2.1.5",
+    "vue-custom-scrollbar": "^1.2.0",
+    "vue-js-modal": "^2.0.0-rc.6",
+    "vue-loading-overlay": "^3.3.3",
+    "vue-router": "^3.2.0",
+    "vue-tailwind-picker": "^1.1.2",
+    "vue2-datepicker": "^3.6.0",
+    "vuejs-logger": "1.5.4",
+    "vuelidate": "^0.7.5",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.4",
+    "@vue/cli-plugin-babel": "~4.4.0",
+    "@vue/cli-plugin-router": "~4.4.0",
+    "@vue/cli-plugin-vuex": "~4.4.0",
+    "@vue/cli-service": "~4.4.0",
+    "@vue/test-utils": "^1.0.4",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^26.3.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^26.4.2",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-jest": "^3.0.6",
+    "vue-template-compiler": "^2.6.11",
+    "vue2-simplert": "^1.0.0"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{js,vue}",
+      "!**/node_modules/**"
+    ],
+    "coverageReporters": [
+      "html",
+      "text-summary"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      ".*\\.(vue)$": "<rootDir>/node_modules/vue-jest",
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    },
+    "transformIgnorePatterns": ["/node_modules/"]
+  }
+}
