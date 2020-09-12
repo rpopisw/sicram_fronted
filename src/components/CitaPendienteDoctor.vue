@@ -41,7 +41,7 @@
               <td >
                 <div class="boton-group">
                   <button class="btn btn-success  mr-2"
-                  @click="cargar({aulaVirtual: element.aulaVirtual, name: element.user.name, lastname: element.user.lastname })">Ingresar</button>
+                  @click="cargar({aulaVirtual: element.aulaVirtual, name: element.user.name, lastname: element.user.lastname, doctor: getUsuario, id : element._id })">Ingresar</button>
                 </div>
               </td>
             </tr>
@@ -49,7 +49,7 @@
         </table>
         <div class="container" v-if="getListaCitasDoctor===null">
               <div class="mt-3" style="padding:50px; align-content: center; text-align: center; background:pink">
-                  <h4>NO CUENTA CON CITAS REGISTRADAS</h4>
+                  <h4>NO CUENTA CON CITAS PENDIENTES</h4>
               </div>
           </div>
 
@@ -79,6 +79,7 @@ export default {
       mensaje: "",
       usuario: "",
       datosUsuario: {},
+      listaDeCitas: null
     };
   },
   components: {
@@ -92,6 +93,7 @@ export default {
       $("a[aria-expanded=true]").attr("aria-expanded", "false");
     });
     this.getCitas();
+    console.log(this.listAtendida)
   },
   methods: {
     ...mapActions(['setObjCita','listarCitasDoctor']),
@@ -115,25 +117,39 @@ export default {
       this.listarCitasDoctor(this.getUsuario)
       console.log(this.getListaCitasDoctor)
     },
-
     //INGRESA A LA CITA
     ingresarCita(cita){
       console.log(cita)
       this.setObjCita(cita)
       window.location.assign("/doctorvista/citadoctor")
     }
-
   },
   computed: {
     ...mapState(["usuarioDoctor","idDoctor"]),
-    ...mapGetters(['getListaCitasDoctor','getUsuario'])
+    ...mapGetters(['getListaCitasDoctor','getUsuario']),
+    listAtendida(){
+      if(this.getListaCitasDoctor==null){
+        this.listaDeCitas = null
+      }else{
+        this.listaDeCitas = []
+        this.getListaCitasDoctor.forEach((element) => {
+          if(element.estado == "pendiente"){
+            this.listaDeCitas.push(element)
+          }
+        });
+        if(this.listaDeCitas.length == 0) {
+          console.log("lista vacia")
+          this.listaDeCitas = null
+        }
+      }         
+      return this.listaDeCitas
+    }
   },
 };
 </script>
 
 <style scoped>
 /*content */
-
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 p {
   font-family: "Poppins", sans-serif;
@@ -141,7 +157,6 @@ p {
   font-weight: 300;
   line-height: 1.7em;
 }
-
 #sidebar ul li a,
 a:hover,
 a:focus {
@@ -149,7 +164,6 @@ a:focus {
   text-decoration: none;
   transition: all 0.3s;
 }
-
 .boton-menu {
   cursor: pointer;
   position: relative;
@@ -161,14 +175,12 @@ a:focus {
   border: none;
   margin-bottom: 15px;
 }
-
 .line {
   width: 100%;
   height: 1px;
   border-bottom: 1px dashed black;
   margin: 40px 0;
 }
-
 /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */
@@ -181,22 +193,17 @@ a:focus {
   top: 0;
   right: 0;
   background-color: #ffffff;
-
 }
-
 #content.active {
   width: 100%;
 }
-
 #content .contenido {
   position: relative;
   top: 10px;
 }
-
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
-
 @media (max-width: 768px) {
   #sidebar {
     margin-left: -150px;
@@ -213,7 +220,6 @@ a:focus {
   #sidebarCollapse span {
     display: none;
   }
-
   .boton-menu {
     cursor: pointer;
     background: #fff;
@@ -226,7 +232,6 @@ a:focus {
     margin-bottom: 15px;
   }
 }
-
 @media (max-width: 375px) {
   #sidebar {
     margin-left: -150px;
@@ -243,7 +248,6 @@ a:focus {
   #sidebarCollapse span {
     display: none;
   }
-
   .boton-menu {
     float: right;
     margin-right: -5px;
@@ -253,7 +257,6 @@ a:focus {
     margin-top: 30px;
   }
 }
-
 /*MODIFICAR CSS */
 .contenido {
   padding: 0 20px;
