@@ -299,7 +299,7 @@ export default {
       console.log(doctor.especialidad);
       console.log(doctor)
       this.axios
-        .post("https://35.192.46.3/api/signupdoctor", {
+        .post("http://35.192.46.3/api/signupdoctor", {
           ...this.doctor,
         }) //elemento spreat
         //agrega al obejto json al contenido que agregamos, seria como un solo json de todos los parámetros

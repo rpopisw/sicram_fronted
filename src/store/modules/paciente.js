@@ -138,7 +138,7 @@ const actions = {
     //CONSULTA DEL PERFIL PACIENTE
     getPerfilPaciente({commit},paciente){
         let url =
-        `https://35.192.46.3/api/user/perfil/${paciente.id}`;
+        `http://35.192.46.3/api/user/perfil/${paciente.id}`;
         axios
         .get(url, {
           headers: {
@@ -157,7 +157,7 @@ const actions = {
     //CONSULTA DE ACTUALIZAR LOS DATOS DEL PACIENTE 
     actualizarDatosPaciente({commit},datos){
         commit('setCarga',true)
-        let url = `https://35.192.46.3/api/user/perfil/update/${datos.paciente.id}`;
+        let url = `http://35.192.46.3/api/user/perfil/update/${datos.paciente.id}`;
         return axios
           .post(
             url,
@@ -186,7 +186,7 @@ const actions = {
     //CONSULTA NUEVO PACIENTE DEPENDIENTE
     registrarPacienteDependiente({commit},datos){
         commit('setCarga',true)
-        let url = `https://35.192.46.3/api/user/dependiente/agregar/${datos.paciente.id}`;
+        let url = `http://35.192.46.3/api/user/dependiente/agregar/${datos.paciente.id}`;
         return axios
           .post(
             url,
@@ -218,7 +218,7 @@ const actions = {
 
     //CONSULTA LISTAR DEPENDIENTES
     listarDependientes({commit},paciente){
-        let url = `https://35.192.46.3/api/user/dependiente/listar/${paciente.id}`;
+        let url = `http://35.192.46.3/api/user/dependiente/listar/${paciente.id}`;
         axios
           .get(
             url,
@@ -245,7 +245,7 @@ const actions = {
     //CONSULTA AGREGAR CITA DEL PACIENTE TITULAR
     agregarCitaPaciente({commit},datos){
         commit('setCarga',true)
-        let url = `https://35.192.46.3/api/user/cita/crear/${datos.paciente.id}`;
+        let url = `http://35.192.46.3/api/user/cita/crear/${datos.paciente.id}`;
         return axios
             .post(
               url,
@@ -278,7 +278,7 @@ const actions = {
     //CONSULTA AGREGAR CITA DEL PACIENTE DEPENDIENTE
     agregarCitaDependiente({commit},datos){
         commit('setCarga',true)
-        let url = `https://35.192.46.3/api/user/dependiente/cita/crear/${datos.idFamiliar}`;
+        let url = `http://35.192.46.3/api/user/dependiente/cita/crear/${datos.idFamiliar}`;
         return axios
             .post(
               url,
@@ -310,7 +310,7 @@ const actions = {
     //CONSULTA LISTAR CITAS 
     listCitas({commit},paciente){
         let url =
-        `https://35.192.46.3/api/user/cita/listar/${paciente.id}`;
+        `http://35.192.46.3/api/user/cita/listar/${paciente.id}`;
         axios
         .get(url, {
           headers: {
@@ -347,7 +347,7 @@ const actions = {
     //CONSULTA PARA ACTUALIZAR LOS DATOS DEL FAMILIAR
     actualizarFamiliar({commit,dispatch},datos){
       commit('setCarga',true)
-        let url = `https://35.192.46.3/api/user/dependiente/modificar/${datos.paciente.id}`;
+        let url = `http://35.192.46.3/api/user/dependiente/modificar/${datos.paciente.id}`;
          return axios
             .post(
               url,
@@ -373,7 +373,7 @@ const actions = {
     //CONSULTA PARA ELIMINAR ALGÚN FAMILIAR
     eliminarFamiliar({commit},datos){
       commit('setCarga',true)
-        let url = `https://35.192.46.3/api/user/dependiente/eliminar/${datos.paciente.id}`;
+        let url = `http://35.192.46.3/api/user/dependiente/eliminar/${datos.paciente.id}`;
          return axios
             .post(
               url,
@@ -415,7 +415,7 @@ const actions = {
     //CONSULTA PARA ACTUALIZAR LOS DATOS DE LA CITA
     actualizarCitaPaciente({commit},datos){
       commit('setCarga',true)
-        let url = `https://35.192.46.3/api/user/cita/actualizar/${datos.paciente.id}`;
+        let url = `http://35.192.46.3/api/user/cita/actualizar/${datos.paciente.id}`;
         return axios
             .post(
               url,
@@ -451,7 +451,7 @@ const actions = {
     //CONSULTA PARA ELIMINAR UNA CITA
     eliminarCitaPaciente({commit},datos){
       commit('setCarga',true)
-        let url = `https://35.192.46.3/api/user/cita/eliminar/${datos.paciente.id}`;
+        let url = `http://35.192.46.3/api/user/cita/eliminar/${datos.paciente.id}`;
           return axios
             .post(
               url,

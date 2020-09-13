@@ -170,7 +170,7 @@ export default {
       this.carga2 = true;
       this.organizacion = org;
       this.axios
-        .post("https://35.192.46.3/api/signuporganizacion", {
+        .post("http://35.192.46.3/api/signuporganizacion", {
           ...this.organizacion,
         }) //elemento spreat
         //agrega al obejto json al contenido que agregamos, seria como un solo json de todos los parámetros
