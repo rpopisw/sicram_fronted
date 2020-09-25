@@ -541,7 +541,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA DEL PERFIL DOCTOR
 <span class="fstat-no" title="function not covered" >    pe</span>rfilDoctor({commit},doctor){
         let url =
-<span class="cstat-no" title="statement not covered" >        `http://35.192.46.3/api/doctor/perfil/${doctor.id}`;</span>
+<span class="cstat-no" title="statement not covered" >        `https://sicramv1.herokuapp.com/api/doctor/perfil/${doctor.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        axios</span>
         .get(url, {
           headers: {
@@ -560,7 +560,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA DE ACTUALIZAR LOS DATOS DEL DOCTOR 
 <span class="fstat-no" title="function not covered" >    ac</span>tualizarDatosDoctor({commit},datos){
 <span class="cstat-no" title="statement not covered" >        commit('setCargaDoctor',true)</span>
-        let url = <span class="cstat-no" title="statement not covered" >`http://35.192.46.3/api/doctor/perfil/update/${datos.doctor.id}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/doctor/perfil/update/${datos.doctor.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        return axios</span>
           .post(
             url,
@@ -590,7 +590,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA NUEVO HORARIO DE ATENCION 
 <span class="fstat-no" title="function not covered" >    re</span>gistrarHorarioDoctor({commit},datos){
 <span class="cstat-no" title="statement not covered" >        commit('setCargaDoctor',true)</span>
-        let url = <span class="cstat-no" title="statement not covered" >`http://35.192.46.3/api/doctor/horario/agregar/${datos.doctor.id}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/doctor/horario/agregar/${datos.doctor.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        return axios</span>
           .post(
             url,
@@ -624,7 +624,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA LISTAR HORARIOS DE ATENCION
 <span class="fstat-no" title="function not covered" >    li</span>starHorariosDoctor({commit},doctor){
 <span class="cstat-no" title="statement not covered" >        axios</span>
-        .get(`http://35.192.46.3/api/doctor/horarios/${doctor.id}`)
+        .get(`https://sicramv1.herokuapp.com/api/doctor/horarios/${doctor.id}`)
 &nbsp;
         .then(<span class="fstat-no" title="function not covered" >(r</span>es) =&gt; {
 <span class="cstat-no" title="statement not covered" >            console.log(res)</span>
@@ -642,7 +642,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA LISTAR CITAS DE ATENCION
 <span class="fstat-no" title="function not covered" >    li</span>starCitasDoctor({commit},doctor){
         let url =
-<span class="cstat-no" title="statement not covered" >        `http://35.192.46.3/api/doctor/cita/listar/${doctor.id}`;</span>
+<span class="cstat-no" title="statement not covered" >        `https://sicramv1.herokuapp.com/api/doctor/cita/listar/${doctor.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        axios</span>
         .get(url, {
           headers: {

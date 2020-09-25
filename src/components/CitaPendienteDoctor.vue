@@ -41,7 +41,7 @@
               <td >
                 <div class="boton-group">
                   <button class="btn btn-success  mr-2"
-                  @click="cargar({aulaVirtual: element.aulaVirtual, name: element.user.name, lastname: element.user.lastname, doctor: getUsuario, id : element._id })">Ingresar</button>
+                  @click="cargar({aulaVirtual: element.aulaVirtual, dni_paciente:element.user.dni,  name: element.user.name, lastname: element.user.lastname, doctor: getUsuario, id : element._id , id_paciente : element.user._id})">Ingresar</button>
                 </div>
               </td>
             </tr>
@@ -55,7 +55,7 @@
 
         <br>
         </div>
-        
+        <simplert :useRadius="true" :useIcon="true" ref="simplert"> </simplert>
       </div>
     </div>
   </div>
@@ -79,7 +79,9 @@ export default {
       mensaje: "",
       usuario: "",
       datosUsuario: {},
-      listaDeCitas: null
+      listaDeCitas: null,
+      cita: null,
+      loader: null
     };
   },
   components: {
@@ -96,9 +98,11 @@ export default {
     console.log(this.listAtendida)
   },
   methods: {
-    ...mapActions(['setObjCita','listarCitasDoctor']),
+    ...mapActions(['setObjCita','listarCitasDoctor',"ingresarCita"]),
     cargar(cita) {
-      let loader = this.$loading.show({
+      this.cita = cita
+      this.ingresar()
+      this.loader = this.$loading.show({
         // Optional parameters
         color: '#0099a1',
         container: this.fullPage ? null : this.$refs.formContainer,
@@ -107,22 +111,31 @@ export default {
         height: 150,
         width: 130,
       });
-      // simulate AJAX
-      setTimeout(() => {
-        loader.hide();
-        this.ingresarCita(cita)
-      }, 3000);
     },
     getCitas() {
       this.listarCitasDoctor(this.getUsuario)
       console.log(this.getListaCitasDoctor)
     },
+
     //INGRESA A LA CITA
-    ingresarCita(cita){
-      console.log(cita)
-      this.setObjCita(cita)
-      window.location.assign("/doctorvista/citadoctor")
+    ingresar(){
+      this.ingresarCita(this.cita.id)
+      .then((res)=>{
+        this.loader.hide();
+        if(res){
+          this.setObjCita(this.cita)
+          window.location.assign("/doctorvista/citadoctor")
+        }else{
+          this.$refs.simplert.openSimplert({
+            title : "AVISO DE CITA",
+            message: "No se encuentra en el horario de su cita.",
+            type: "warning"
+          });
+        }
+      })
+      
     }
+
   },
   computed: {
     ...mapState(["usuarioDoctor","idDoctor"]),
@@ -150,6 +163,7 @@ export default {
 
 <style scoped>
 /*content */
+
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 p {
   font-family: "Poppins", sans-serif;
@@ -157,6 +171,7 @@ p {
   font-weight: 300;
   line-height: 1.7em;
 }
+
 #sidebar ul li a,
 a:hover,
 a:focus {
@@ -164,6 +179,7 @@ a:focus {
   text-decoration: none;
   transition: all 0.3s;
 }
+
 .boton-menu {
   cursor: pointer;
   position: relative;
@@ -175,12 +191,14 @@ a:focus {
   border: none;
   margin-bottom: 15px;
 }
+
 .line {
   width: 100%;
   height: 1px;
   border-bottom: 1px dashed black;
   margin: 40px 0;
 }
+
 /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */
@@ -193,17 +211,22 @@ a:focus {
   top: 0;
   right: 0;
   background-color: #ffffff;
+
 }
+
 #content.active {
   width: 100%;
 }
+
 #content .contenido {
   position: relative;
   top: 10px;
 }
+
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
+
 @media (max-width: 768px) {
   #sidebar {
     margin-left: -150px;
@@ -220,6 +243,7 @@ a:focus {
   #sidebarCollapse span {
     display: none;
   }
+
   .boton-menu {
     cursor: pointer;
     background: #fff;
@@ -232,6 +256,7 @@ a:focus {
     margin-bottom: 15px;
   }
 }
+
 @media (max-width: 375px) {
   #sidebar {
     margin-left: -150px;
@@ -248,6 +273,7 @@ a:focus {
   #sidebarCollapse span {
     display: none;
   }
+
   .boton-menu {
     float: right;
     margin-right: -5px;
@@ -257,6 +283,7 @@ a:focus {
     margin-top: 30px;
   }
 }
+
 /*MODIFICAR CSS */
 .contenido {
   padding: 0 20px;

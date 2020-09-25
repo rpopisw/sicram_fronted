@@ -47,7 +47,7 @@ const actions = {
     //INICIAR SESION DOCTOR 
     loginDoctor({commit,dispatch },doctor){
         return axios
-        .post("http://35.192.46.3/api/signindoctor",{
+        .post("https://sicramv1.herokuapp.com/api/signindoctor",{
           ...doctor
         })
         .then((res)=>{
@@ -67,7 +67,7 @@ const actions = {
     loginOrganizacion({commit,dispatch },organizacion){
         
         return axios
-        .post("http://35.192.46.3/api/signinorganizacion",{
+        .post("https://sicramv1.herokuapp.com/api/signinorganizacion",{
           ...organizacion
         })
         .then((res)=>{
@@ -89,7 +89,7 @@ const actions = {
     loginPaciente({commit,dispatch },paciente){
        
         return axios
-        .post("http://35.192.46.3/api/signinuser",{
+        .post("https://sicramv1.herokuapp.com/api/signinuser",{
           ...paciente
         })
         .then((res)=>{
@@ -107,7 +107,7 @@ const actions = {
     },
     //CONSULTA DE LAS ESPECIALIDADES DEL SISTEMA
     listarEspecialidades({commit}){
-        let url = `http://35.192.46.3/api/especialidad`;
+        let url = `https://sicramv1.herokuapp.com/api/especialidad`;
         return axios
         .get(url) 
         .then((res) => {
@@ -122,7 +122,7 @@ const actions = {
     //CONSULTA PARA LA PRUEBA
     especialidadesPrueba(){
         return axios
-        .get("http://35.192.46.3/api/especialidad") 
+        .get("https://sicramv1.herokuapp.com/api/especialidad") 
         .then(res=> 
             res.data
         )
@@ -167,6 +167,27 @@ const actions = {
             commit('setUsuario',null)
             commit('setTipoUsuario',null)
         }
+    },
+
+    //INGRESR CITA
+    ingresarCita({commit},id_cita){    
+        return axios
+        .post("https://sicramv1.herokuapp.com/api/cita/ingresar",
+        {id_cita : id_cita})
+        .then((res)=>{
+            console.log(res)
+            if(res.data.ingreso === true){
+                return Promise.resolve(true)
+            }else if(res.data.msg==="Cita no encontrada"){
+                return Promise.resolve(false)
+            }else{
+                return Promise.resolve(false)
+            }
+        })
+        .catch((e)=>{
+            console.log(e)
+            return Promise.resolve(false)
+        })
     }
 }
    

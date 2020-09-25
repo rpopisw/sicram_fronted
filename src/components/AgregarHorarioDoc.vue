@@ -68,7 +68,7 @@
                 class="mt-3"
                 style="padding:50px; align-content: center; text-align: center; background:pink"
               >
-                <h4>NO CUENTA CON HORARIOS REGISTRADOS OCUPADOS</h4>
+                <h4>NO CUENTA CON HORARIOS LIBRES</h4>
               </div>
             </div>
             <div v-if="getListaHorariosDoctor != null">
@@ -169,6 +169,8 @@ export default {
         { text: "17:00-18:00", value: 7, inicio: "17:00", fin: "18:00" },
         { text: "18:00-19:00", value: 8, inicio: "18:00", fin: "19:00" },
         { text: "19:00-20:00", value: 9, inicio: "19:00", fin: "20:00" },
+        { text: "20:00-21:00", value: 10, inicio: "20:00", fin: "21:00" },
+        { text: "21:00-22:00", value: 11, inicio: "21:00", fin: "22:00" },
       ],
     };
   },
@@ -185,7 +187,7 @@ export default {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       return (
-        date < today || date > new Date(today.getTime() + 7 * 24 * 3600 * 1000)
+        date < new Date(today.getTime() + 1 * 24 * 3600 * 1000) || date > new Date(today.getTime() + 8 * 24 * 3600 * 1000)
       );
     },
 
@@ -209,7 +211,7 @@ export default {
     agregarHorario(horario) {
       //CASILLAS VACÍAS
       console.log(horario);
-      if (horario.hora_inicio === "" || horario.fecha === "") {
+      if (horario.hora_inicio === "" || horario.fecha === "" || horario.fecha === null) {
         this.$log.warn("CITAS : ", "LLENE TODOS LOS CAMPOS");
 
         this.mensajeRegistro = {
@@ -466,8 +468,7 @@ a:focus {
   }
   .contenido-Horario {
     padding: 30px 5px 0 5px;
-    .horario {
-    }
+    
   }
 }
 </style>

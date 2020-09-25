@@ -1,7 +1,8 @@
 <template>
   <div>
     <!-- Page Content  -->
-    <ModEditarCita/>
+    <ModEditarCita />
+    <ModSintomasPaciente />
     <div id="content">
       <div class="">
         <button type="button" id="sidebarCollapse" class=" boton-menu">
@@ -55,14 +56,15 @@
                         <button
                           class="btn btn-md  btn-ingresar "
                           @click="
-                            cargar({
+                            abrirDetalleSintomas({
                               aulaVirtual: element.aulaVirtual,
                               name: element.doctor.name,
                               lastname: element.doctor.lastname,
+                              id_cita: element._id,
                             })
                           "
                         >
-                         <i class="fas fa-video fa-sm"></i> Ingresar
+                          <i class="fas fa-video fa-sm"></i> Ingresar
                         </button>
                       </div>
                       <div>
@@ -105,23 +107,16 @@
 </template>
 
 <script>
+import ModSintomasPaciente from "@/components/Modales/ModSintomasPaciente.vue";
 import ModEditarCita from "@/components/Modales/ModEditarCita.vue";
-import Vue from "vue";
-//Impor component mensaje
 import Simplert from "@/components/Simplert.vue";
-// Import component
-import Loading from "vue-loading-overlay";
-// Import stylesheet
-import "vue-loading-overlay/dist/vue-loading.css";
-// Init plugin
-Vue.use(Loading);
 import { mapState, mapActions, mapGetters } from "vuex";
 export default {
   name: "ActualizarCitaPaciente",
   components: {
     Simplert,
-    Loading,
-    ModEditarCita
+    ModEditarCita,
+    ModSintomasPaciente,
   },
   data() {
     return {
@@ -132,7 +127,7 @@ export default {
       diaMax: new Date(),
       fecha: "",
       cita: null,
-      listaDeCitas : null
+      listaDeCitas: null,
     };
   },
   mounted() {
@@ -142,26 +137,34 @@ export default {
       $("a[aria-expanded=true]").attr("aria-expanded", "false");
     });
     this.getCita();
-    console.log(this.listAtendida)
   },
   methods: {
-    ...mapActions(["setObjCita", "listCitas",'listarDependientes',"eliminarCitaPaciente","datosCita","listarHorariosDoctor"]),
-    cargar(cita) {
-      let loader = this.$loading.show({
-        // Optional parameters
-        color: "#0099a1",
-        container: this.fullPage ? null : this.$refs.formContainer,
-        canCancel: false,
-        loader: "dots",
-        height: 150,
-        width: 130,
-      });
-      // simulate AJAX
-      setTimeout(() => {
-        loader.hide();
-        this.ingresarCita(cita);
-      }, 3000);
-    }, //
+    ...mapActions([
+      "setObjCita",
+      "listCitas",
+      "listarDependientes",
+      "eliminarCitaPaciente",
+      "datosCita",
+      "listarHorariosDoctor",
+      "ingresarCita"
+    ]),
+    //MODAL PARA DETALLAR SINTOMAS
+    abrirDetalleSintomas(cita) {
+      this.ingresarCita(cita.id_cita)
+      .then((res)=>{
+        if(res){
+          this.setObjCita(cita);
+          this.$modal.show("mod-sintomas-paciente");
+        }else{
+          this.$refs.simplert.openSimplert({
+            title : "AVISO DE CITA",
+            message: "No se encuentra en el horario de su cita.",
+            type: "warning"
+          });
+        }
+      })
+    },
+
     MostrarFecha(fecha) {
       var nombres_dias = new Array(
         "Domingo",
@@ -186,19 +189,23 @@ export default {
         "Noviembre",
         "Diciembre"
       );
+
       const dia_mes = fecha.getDate(); //dia del mes
       const dia_semana = fecha.getDay(); //dia de la semana
       const mes = fecha.getMonth() + 1;
       const anio = fecha.getFullYear();
+
       var fechaHora = new Date();
       var horas = fechaHora.getHours();
       var minutos = fechaHora.getMinutes();
       var segundos = fechaHora.getSeconds();
       var sufijo = "AM";
+
       if (horas > 12) {
         horas = horas - 12;
         sufijo = "PM";
       }
+
       if (horas < 10) {
         horas = "0" + horas;
       }
@@ -208,9 +215,11 @@ export default {
       if (segundos < 10) {
         segundos = "0" + segundos;
       }
+
       //escribe en pagina
       return nombres_dias[dia_semana] + " " + dia_mes;
     },
+
     setFecha(fecha1, fecha2) {
       this.fecha =
         this.MostrarFecha(fecha1) + " al " + this.MostrarFecha(fecha2);
@@ -221,23 +230,15 @@ export default {
       //LLAMA A LA FUNCION LISTAR CISTAS DE PACIENTE.JS
       this.listCitas(this.getUsuario);
     },
-    //INGRESA A LA CITA
-    ingresarCita(cita) { 
-      console.log(cita); 
-      this.setObjCita(cita);
-      window.location.assign('/pacientevista/citapaciente')
-    },
-  
     //ABRE MODAL DE EDICION DE CITA
-    abrirEdicion(cita){
-      console.log("asdasd",cita.doctor)
+    abrirEdicion(cita) {
       let datos = {
-        id : cita.doctor._id
-      }
+        id: cita.doctor._id,
+      };
       //cita.doctor.name = cita.doctor.name + " " + cita.doctor.lastname
-      this.listarHorariosDoctor(datos)
-      this.datosCita(cita)
-      this.$modal.show('mod-editar-cita')
+      this.listarHorariosDoctor(datos);
+      this.datosCita(cita);
+      this.$modal.show("mod-editar-cita");
     },
     //ABRE MODAL DE CONFIRAMCIÓN DE ELIMINACIÓN
     abrirEliminación(cita) {
@@ -253,55 +254,62 @@ export default {
     //LLAMA A ELIMINAR CITA DE PACIENTE EN PACIENTE.JS
     eliminarCita() {
       console.log(this.cita);
-      let datos= {
+      let datos = {
         paciente: this.getUsuario,
-        id_cita: this.cita._id
-      }
-      this.eliminarCitaPaciente(datos)
-      .then((res)=>{
+        id_cita: this.cita._id,
+      };
+      this.eliminarCitaPaciente(datos).then((res) => {
         this.$refs.simplert.openSimplert(this.getMensaje);
         this.listCitas(this.getUsuario);
-      })
+      });
     },
-  }, // 
+  }, //
   computed: {
     ...mapState(["usuarioPaciente", "idPaciente"]),
-    ...mapGetters(['getEspecialidades','getListFamiliares',"getUsuario", "getListaCitas","getMensaje"]),
-    listAtendida(){
-      console.log("lista",this.getListaCitas)
-      if(this.getListaCitas==null){
-        this.listaDeCitas = null
-      }else{
-        this.listaDeCitas = []
+    ...mapGetters([
+      "getEspecialidades",
+      "getListFamiliares",
+      "getUsuario",
+      "getListaCitas",
+      "getMensaje",
+    ]),
+    listAtendida() {
+      console.log("lista", this.getListaCitas);
+      if (this.getListaCitas == null) {
+        this.listaDeCitas = null;
+      } else {
+        this.listaDeCitas = [];
         this.getListaCitas.forEach((element) => {
-          if(element.estado == "pendiente"){
-            this.listaDeCitas.push(element)
+          if (element.estado == "pendiente") {
+            this.listaDeCitas.push(element);
           }
         });
-        if(this.listaDeCitas.length == 0) {
-          console.log("lista vacia")
-          this.listaDeCitas = null
+        if (this.listaDeCitas.length == 0) {
+          console.log("lista vacia");
+          this.listaDeCitas = null;
         }
-      }         
-      return this.listaDeCitas
-    }
+      }
+      return this.listaDeCitas;
+    },
   },
   beforeMount() {
     this.diaMax.setDate(this.diaMax.getDate() + 7);
     this.setFecha(this.diaMin, this.diaMax);
-    this.listarDependientes(this.getUsuario)
+    this.listarDependientes(this.getUsuario);
   },
 };
 </script>
 
 <style scoped>
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
 p {
   font-family: "Poppins", sans-serif;
   font-size: 1em;
   font-weight: 300;
   line-height: 1em;
 }
+
 .mayusculas {
   text-transform: uppercase;
 }
@@ -312,6 +320,7 @@ a:focus {
   text-decoration: none;
   transition: all 0.3s;
 }
+
 .boton-menu {
   cursor: pointer;
   position: relative;
@@ -323,12 +332,14 @@ a:focus {
   border: none;
   margin-bottom: 15px;
 }
+
 .line {
   width: 100%;
   height: 1px;
   border-bottom: 1px dashed black;
   margin: 40px 0;
 }
+
 /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */
@@ -342,9 +353,11 @@ a:focus {
   right: 0;
   background-color: #ffffff;
 }
+
 #content.active {
   width: 100%;
 }
+
 #content .contenido {
   position: relative;
   top: 10px;
@@ -353,6 +366,7 @@ a:focus {
   text-align: center;
   background: #0099a1;
 }
+
 .foto {
   background: gray;
   height: 150px;
@@ -386,6 +400,7 @@ a:focus {
 .btn-editar:hover {
   background: rgb(43, 161, 43);
 }
+
 .btn-ingresar {
   width: 150px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -396,6 +411,7 @@ a:focus {
 .btn-ingresar:hover {
   background: #1869c5;
 }
+
 .btn-eliminar {
   width: 150px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -404,12 +420,14 @@ a:focus {
   margin-bottom: 5px;
   margin-top: 5px;
 }
+
 .btn-eliminar:hover {
   background: rgb(199, 21, 21);
 }
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
+
 @media (max-width: 768px) {
   #sidebar {
     margin-left: -150px;
@@ -426,6 +444,7 @@ a:focus {
   #sidebarCollapse span {
     display: none;
   }
+
   .boton-menu {
     cursor: pointer;
     background: #fff;
@@ -437,6 +456,7 @@ a:focus {
     border: none;
     margin-bottom: 15px;
   }
+
   .titulo {
     margin-top: 35px;
     text-align: left;
@@ -455,6 +475,7 @@ a:focus {
     width: 200px;
   }
 }
+
 @media (max-width: 375px) {
   #sidebar {
     margin-left: -150px;
@@ -471,6 +492,7 @@ a:focus {
   #sidebarCollapse span {
     display: none;
   }
+
   .boton-menu {
     float: right;
     margin-right: -5px;
@@ -479,6 +501,7 @@ a:focus {
     position: relative;
     margin-top: 30px;
   }
+
   .titulo {
     margin-top: 0px;
     text-align: center;
@@ -492,6 +515,7 @@ a:focus {
 form {
   padding: 50px;
 }
+
 label {
   font-weight: 500;
 }
@@ -503,6 +527,7 @@ label {
   background: #01c2cc;
   color: white;
 }
+
 @media (max-width: 375px) {
   .contenido {
     position: relative;

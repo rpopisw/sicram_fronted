@@ -81,7 +81,9 @@
                 </div>
                 <div class="col-8">
                   <input
-                    type="text"
+                    min="1"
+                    max="120"
+                    type="number"
                     class="form-control"
                     v-model="getDatosFamiliar.edad"
                   />
@@ -94,13 +96,14 @@
             <div class="form-group col-md-6">
               <div class="row mr-1">
                 <div class="col-4">
-                  <label for="inputGenero">Correo</label>
+                  <label for="inputGenero">Género</label>
                 </div>
                 <div class="col-8">
                   <input
                     type="text"
                     class="form-control"
-                    v-model="getDatosFamiliar.email"
+                    v-model="getDatosFamiliar.genero"
+                    disabled
                   />
                 </div>
               </div>
@@ -112,9 +115,11 @@
                 </div>
                 <div class="col-8">
                   <input
-                    type="text"
+                    type="number"
                     class="form-control"
                     v-model="getDatosFamiliar.celular"
+                    oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                    maxlength="9"
                   />
                 </div>
               </div>
@@ -164,6 +169,7 @@ export default {
   data() {
     return {
       familiar: null,
+      mensajeError: null,
     };
   },
   components: {
@@ -171,11 +177,37 @@ export default {
   },
   methods: {
     ...mapActions(["actualizarFamiliar"]),
+    //VERIFICA CELULAR Y DNI
+    camposIncorrectos(element) {
+      if (element.celular.toString().length !== 9) {
+        this.mensajeError = {
+          title: "CELULAR INVALIDO",
+          message: "El número de celular debe tener 9 dígitos.",
+          type: "warning",
+        };
+        return true;
+      }
+    },
+    //VERIFICA SI LOS CAMPOS ESTÁN VACIOS
+    camposVacios(element) {
+      for (const e in element) {
+        if (element[e] == "" || element[e] == null) {
+          return true;
+        }
+      }
+    },
     //MODAL PARA CONFIRMAR EDICION DEPENDIENTE
     abrirEditarDependiente(dependiente) {
-      this.familiar = dependiente;
-      this.getMensajeEditar.onConfirm = this.editarDependiente;
-      this.$refs.simplert.openSimplert(this.getMensajeEditar);
+      if (this.camposVacios(dependiente)) {
+        //VERIFICAMOS SI EL OBJETO ESTÁ VACIO
+        this.$refs.simplert.openSimplert(this.getMensajeAdvertencia);
+      } else if (this.camposIncorrectos(dependiente)) {
+        this.$refs.simplert.openSimplert(this.mensajeError);
+      } else {
+        this.familiar = dependiente;
+        this.getMensajeEditar.onConfirm = this.editarDependiente;
+        this.$refs.simplert.openSimplert(this.getMensajeEditar);
+      }
     },
     //LLAMA A EDITAR DEPENDIENTE DE PACIENTE.JS
     editarDependiente() {
@@ -197,6 +229,7 @@ export default {
       "getCarga",
       "getMensajeEditar",
       "getDatosFamiliar",
+      "getMensajeAdvertencia",
     ]),
   },
 };

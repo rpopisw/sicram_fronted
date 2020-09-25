@@ -102,6 +102,30 @@ const mutations = {
       }
     },
 
+    setAdvertencia(state,paylaod){
+      state.mensajeOrganizacion  = {
+        title: "CAMPOS NECESARIOS",
+        message: paylaod,
+        type: "warning",
+      }
+    },
+
+    setError(state,payload){
+      state.mensajeOrganizacion  = {
+        title: "REGISTRO FALLIDO",
+        message: payload,
+        type: "error",
+      }
+    },
+
+    setExito(state,payload){
+      state.mensajeOrganizacion  = {
+        title: "REGISTRO EXITOSO",
+        message: payload,
+        type: "success",
+      }
+    },
+
     //PONE VALOR DE CARGA
     setCargaOrganizacion(state, payload){
         state.cargaOrganizacion = payload
@@ -117,7 +141,7 @@ const actions = {
     //CONSULTA CONSEGUIR DATOS DE LA ORGANIZACION
     perfilOrganizacion({commit},organizacion){
         let url =
-        `http://35.192.46.3/api/organizacion/perfil/${organizacion.id}`;
+        `https://sicramv1.herokuapp.com/api/organizacion/perfil/${organizacion.id}`;
         axios
         .get(url, {
           headers: {
@@ -136,7 +160,7 @@ const actions = {
     //CONSULTA ACTUALIZAR DATOS DE LA ORGANIZACION
     actualizarOrganizacion({commit},datos){
       commit('setCargaOrganizacion',true)
-        let url = `http://35.192.46.3/api/organizacion/perfil/update/${datos.organizacion.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/organizacion/perfil/update/${datos.organizacion.id}`;
         return axios
         .post(
           url,
@@ -151,11 +175,13 @@ const actions = {
             console.log(res)
             commit('setMensajeActualizacionPositivaOrg')
             commit('setDatosOrganizacion',res.data)
+            commit('setCargaOrganizacion',false)
             return Promise.resolve(true)
         })
         .catch((e) => {
             console.log(e)
             commit('setMensajeActualizacionNegativaOrg')
+            commit('setCargaOrganizacion',false)
             return Promise.resolve(false)
         });
     },
@@ -163,7 +189,7 @@ const actions = {
     //CONSULTA AGREGAR DOCTOR A LA ORGANIZACION
     agregarNuevoDoctor({commit},datos){
         commit('setCargaOrganizacion',true)
-        let url = `http://35.192.46.3/api/organizacion/doctor/registrar/${datos.organizacion.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/organizacion/doctor/registrar/${datos.organizacion.id}`;
         return axios
         .post(
           url,
@@ -178,25 +204,32 @@ const actions = {
             console.log(res)
             commit('setCargaOrganizacion',false)
             if (res.data.msg === "Bienvenido Doctor, es un nuevo usario.") {
-                commit('setMensajePositivoOrganizacion')
-                return Promise.resolve(true)
-            } else {
-                commit('setMensajeNegativoOrganizacion')
-                return Promise.resolve(false)
+              commit('setMensajePositivoOrganizacion')
+              return Promise.resolve(true)
+            }else if(res.data.msg === "Username ya existe" ){
+              commit('setError',"El usuario ya existe")
+              return Promise.resolve(false)
+            }else if(res.data.msg === "LLene los nombres y apellidos, completos y CORRECTOS del doctor" ){
+              commit('setError',"Debe registrar el nombres y apellidos COMPLETOS y CORRECTOS del doctor.")
+              return Promise.resolve(false)
+            } 
+            else {
+              commit('setError',"Ya existe un Doctor con este usuario o correo electrónico.")
+              return Promise.resolve(false)
             }
         })
         .catch((e) => {
             console.log(e)
             commit('setCargaOrganizacion',false)
-            commit('setMensajeNegativoOrganizacion')
-            return Promise.resolve(false)
+            commit('setError',"Ya existe un Doctor con este usuario o correo electrónico.")
+              return Promise.resolve(false)
         });
     },
 
     //CONSULTA LISTAR DOCTORES DE LA ORGANIZACION
     listarDoctores({commit},organizacion){
         console.log(organizacion)
-        let url = `http://35.192.46.3/api/organizacion/doctor/obtener/${organizacion.id}`;
+        let url = `https://sicramv1.herokuapp.com/api/organizacion/doctor/obtener/${organizacion.id}`;
             axios
             .get(
                 url,
@@ -222,7 +255,7 @@ const actions = {
     //CONSULTA PARA ACTUALIZAR LOS DATOS DEL DOCTOR
     actualizarDoctorOrg({commit},datos){
        // commit('setCargaDoctor',true)
-      let url = `http://35.192.46.3/api/doctor/horario/modificar/${datos.doctor.id}`;
+      let url = `http://sicramv1.herokuapp.com/api/doctor/horario/modificar/${datos.doctor.id}`;
       axios
         .post(
           url,
@@ -253,7 +286,7 @@ const actions = {
     //CONSULTA PARA ELIMINAR AL DOCTOR SELECCIONADO
     eliminarDoctorOrg({commit},datos){
       commit('setCargaDoctor',true)
-      let url = `http://35.192.46.3/api/organizacion/doctor/eliminar/${datos.doctor.id}`;
+      let url = `https://sicramv1.herokuapp.com/api/organizacion/doctor/eliminar/${datos.doctor.id}`;
       return axios
         .post(
           url,

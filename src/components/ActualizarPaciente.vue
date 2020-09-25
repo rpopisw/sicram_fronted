@@ -19,7 +19,18 @@
         >
           <div class="row justify-content-center" style="background:#0099a1;">
             <div class="foto col-sm-3  col-md-3 mt-2 mb-2 ">
-              <img src="../assets/user.png" alt="" />
+              <img
+                v-if="getDatosPaciente.genero == 'masculino'"
+                class=""
+                src="../assets/usuarioM.png"
+                alt=""
+              />
+              <img
+                v-if="getDatosPaciente.genero == 'femenino'"
+                class=""
+                src="../assets/usuarioH.png"
+                alt=""
+              />
             </div>
 
             <div class="col-sm-7 col-md-7 col-12 titulo">
@@ -100,7 +111,6 @@
                     <input
                       type="text"
                       class="form-control"
-                      id="inputEdad"
                       v-model="datosUsuario.discapacidad"
                     />
                   </div>
@@ -130,10 +140,14 @@
                   </div>
                   <div class="col-8">
                     <input
+                      min="18"
                       type="number"
+                      oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                      maxlength="3"
                       class="form-control"
                       id="inputCelular"
                       v-model="datosUsuario.edad"
+                      max="120"
                     />
                   </div>
                 </div>
@@ -147,9 +161,10 @@
                   </div>
                   <div class="col-8">
                     <input
-                      type="text"
+                      oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                      maxlength="9"
+                      type="number"
                       class="form-control"
-                      id="inputCMP"
                       v-model="datosUsuario.celular"
                     />
                   </div>
@@ -183,52 +198,6 @@
               >
             </div>
           </form>
-          <div
-            class="row "
-            style="background:#0099a1; height:60px; align-content: center;"
-          >
-            <div class="col-12 text-center">
-              <h3 style="color:white">Actualizar contraseña</h3>
-            </div>
-          </div>
-          <form action="">
-            <div class="form-row ">
-              <div class="form-group col-md-6">
-                <div class="row mr-1">
-                  <div class="col-4">
-                    <label for="inputNombre">Contraseña:</label>
-                  </div>
-                  <div class="col-8">
-                    <input
-                      style="text-transform: uppercase;"
-                      type="text"
-                      class="form-control"
-                      id="inputNombre"
-                      v-model="datosUsuario.name"
-                      :disabled="true"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="form-group col-md-6 ">
-                <div class="row mr-1">
-                  <div class="col-4">
-                    <label for="inputApellido">Nueva Contraseña:</label>
-                  </div>
-                  <div class="col-8">
-                    <input
-                      style="text-transform: uppercase;"
-                      type="text"
-                      class="form-control"
-                      id="inputApellido"
-                      v-model="datosUsuario.lastname"
-                      :disabled="true"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
         </div>
       </div>
       <simplert :useRadius="true" :useIcon="true" ref="simplert"> </simplert>
@@ -246,11 +215,8 @@ export default {
   },
   data() {
     return {
-      mensajeRegistro: {},
-      mensaje: "",
       datosUsuario: {},
-      deshabilitar: null,
-      actualizarUsuario: {},
+      mensajeError : null
     };
   },
   mounted() {
@@ -263,25 +229,57 @@ export default {
   },
   methods: {
     ...mapActions(["actualizarDatosPaciente"]),
+    //VERIFICA CELULAR Y DNI
+    camposIncorrectos(element) {
+      console.log(element)
+      var cel = element.celular.toString().length;
+      console.log(cel)
+        if (cel != 9) {
+        this.mensajeError = {
+          title: "CELULAR INVALIDO",
+          message: "El número de celular debe tener 9 dígitos.",
+          type: "warning",
+        };
+        return true;
+      } 
+    },
+    //CAMPOS VACIOS
+    camposVacios(element){
+      for(const e in element){
+        if(element[e] == "" || element[e]  == null){
+          return true
+        }
+      }
+    },
     //FUNCION PARA ACTUALIZAR AL PACIENTE
     actualizarPaciente(pacient) {
-      this.deshabilitar = true;
-      const datos = {
-        paciente: this.getUsuario,
-        newDatos: pacient,
-      };
-      //LLAMA A LA CONSULTADA ALMACENADA EN PACIENTE.JS
-      this.actualizarDatosPaciente(datos)
-      .then((res)=>{
-        this.$refs.simplert.openSimplert(this.getMensaje);
-      })
+      if (this.camposVacios(pacient)) {
+        this.$refs.simplert.openSimplert(this.getMensajeAdvertencia);
+      }else if(this.camposIncorrectos(pacient)){
+        this.$refs.simplert.openSimplert(this.mensajeError);
+      }else{
+          const datos = {
+          paciente: this.getUsuario,
+          newDatos: pacient,
+        };
+        //LLAMA A LA CONSULTADA ALMACENADA EN PACIENTE.JS
+        this.actualizarDatosPaciente(datos).then((res) => {
+          this.$refs.simplert.openSimplert(this.getMensaje);
+        });
+      }
     },
     datosPaciente() {
       this.datosUsuario = this.getDatosPaciente;
     },
   },
   computed: {
-    ...mapGetters(["getDatosPaciente", "getUsuario","getCarga","getMensaje"]),
+    ...mapGetters([
+      "getDatosPaciente",
+      "getUsuario",
+      "getCarga",
+      "getMensaje",
+      "getMensajeAdvertencia",
+    ]),
   },
 };
 </script>
@@ -328,7 +326,7 @@ a:focus {
 #content {
   width: calc(100% - 150px);
   padding: 10px 0 0 0px;
-  min-height: 130vh;
+  min-height: 100vh;
   transition: all 0.3s;
   position: absolute;
   top: 0;
@@ -477,7 +475,7 @@ label {
 .foto img {
   width: 100px;
   height: 100%;
-
+  background: white;
   border-radius: 100%;
   box-shadow: 0 0 3px 3px #62bbe4;
   object-fit: cover;

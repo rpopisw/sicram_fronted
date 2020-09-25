@@ -153,7 +153,7 @@ export const mutations = {
 }
 export const actions = {
 <span class="fstat-no" title="function not covered" >    ge</span>tEspecialidades ({ commit }) {
-<span class="cstat-no" title="statement not covered" >    return axios.get('http://35.192.46.3/api/especialidad')</span>
+<span class="cstat-no" title="statement not covered" >    return axios.get('https://sicramv1.herokuapp.com/api/especialidad')</span>
     .then(<span class="fstat-no" title="function not covered" >re</span>sponse =&gt; {
 <span class="cstat-no" title="statement not covered" >      console.log('res', response)</span>
 <span class="cstat-no" title="statement not covered" >      commit('SET_DATA', response.data)</span>
@@ -162,7 +162,7 @@ export const actions = {
   },
 &nbsp;
   getHorarios({commit},idDoctor){
-    return axios.get("http://35.192.46.3/api/doctor/horarios/5f483efbda91ec0017ca86b1")
+    return axios.get("https://sicramv1.herokuapp.com/api/doctor/horarios/5f483efbda91ec0017ca86b1")
     .then(response =&gt; {
       console.log('res', response)
       commit('SET_DATA_HORARIO', response.data)

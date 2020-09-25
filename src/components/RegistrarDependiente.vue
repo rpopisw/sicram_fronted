@@ -19,7 +19,7 @@
         >
           <div class="row justify-content-center" style="background:#0099a1;">
             <div class="foto col-sm-3  col-md-3 mt-2 mb-2 ">
-              <img src="../assets/personas.jpg" alt="" />
+              <img src="../assets/equipo.png" alt="" />
             </div>
 
             <div class="col-sm-7 col-md-7 col-12 titulo">
@@ -38,6 +38,7 @@
                 discapacidad: dependiente.discapacidad,
                 celular: dependiente.celular,
                 direccion: dependiente.direccion,
+                genero: dependiente.genero,
               })
             "
           >
@@ -85,10 +86,10 @@
                   </div>
                   <div class="col-8">
                     <input
-                      maxlength="8"
                       type="number"
                       class="form-control"
-                      id="inputDNI"
+                      oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                      maxlength="8"
                       placeholder="DNI Familiar"
                       v-model="dependiente.dni"
                     />
@@ -104,9 +105,9 @@
                     <input
                       type="text"
                       class="form-control"
-                      id="inputEdad"
                       placeholder="Discapacidad 'ninguna'"
                       v-model="dependiente.discapacidad"
+                      
                     />
                   </div>
                 </div>
@@ -116,16 +117,18 @@
               <div class="form-group col-md-6">
                 <div class="row mr-1">
                   <div class="col-4">
-                    <label for="inputGenero">Correo</label>
+                    <label for="inputGenero">Género</label>
                   </div>
                   <div class="col-8">
-                    <input
-                      type="text"
+                    <select
+                      id="inputState"
                       class="form-control"
-                      id="Correo"
-                      v-model="dependiente.email"
-                      placeholder="Correo Familiar"
-                    />
+                      v-model="dependiente.genero"
+                    >
+                      <option disabled value="">Seleccione género</option>
+                      <option value="femenino">Femenino</option>
+                      <option value="masculino">Masculino</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -138,7 +141,8 @@
                     <input
                       type="number"
                       class="form-control"
-                      id="inputCelular"
+                      max="120"
+                      min="1"
                       placeholder="Edad Familiar"
                       v-model="dependiente.edad"
                     />
@@ -156,7 +160,8 @@
                     <input
                       type="number"
                       class="form-control"
-                      id="inputCMP"
+                      oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                      maxlength="9"
                       placeholder="Celular Familiar"
                       v-model="dependiente.celular"
                     />
@@ -172,8 +177,7 @@
                     <input
                       type="text"
                       class="form-control"
-                      id="inputProfesion"
-                      placeholder="Direccion Familiar"
+                      placeholder="Direccion domicilio familiar"
                       v-model="dependiente.direccion"
                     />
                   </div>
@@ -181,10 +185,13 @@
               </div>
             </div>
             <div class="text-center boton-final">
-              <button class="but btn btn-lg mt-4" style="color:"
-                :disabled="getCarga">
-                  Registrar
-                </button>
+              <button
+                class="but btn btn-lg mt-4"
+                style="color:"
+                :disabled="getCarga"
+              >
+                Registrar
+              </button>
             </div>
           </form>
         </div>
@@ -196,7 +203,7 @@
 
 <script>
 import Simplert from "@/components/Simplert.vue";
-import { mapGetters , mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: "RegistrarDependiente",
   components: {
@@ -204,23 +211,26 @@ export default {
   },
   data() {
     return {
-      dependiente: {//DATOS DEL DEPENDIENTE
+      dependiente: {
+        //DATOS DEL DEPENDIENTE
         name: "",
         lastname: "",
-        email: "",
+        email: "email@hotmail.com",
         dni: "",
         edad: "",
         discapacidad: "",
         celular: "",
         direccion: "",
+        genero: "",
       },
+      mensajeError: null,
     };
   },
   methods: {
     ...mapActions(["registrarPacienteDependiente"]),
     //vacía las casillas despues de un registro
-    vaciar(){
-      this.dependiente= {
+    vaciar() {
+      this.dependiente = {
         name: "",
         lastname: "",
         email: "",
@@ -229,36 +239,68 @@ export default {
         discapacidad: "",
         celular: "",
         direccion: "",
+      };
+    },
+    //VERIFICA SI LOS DATOS ESTAN VACIOS
+    camposVacios(element) {
+      for (const e in element) {
+        if (element[e] == "" || element[e] == null) {
+          return true;
+        }
+      }
+    },
+    //VERIFICA CELULAR Y DNI
+    camposIncorrectos(element) {
+      if (element.celular.length !== 9) {
+        this.mensajeError = {
+          title: "CELULAR INVALIDO",
+          message: "El número de celular debe tener 9 dígitos.",
+          type: "warning",
+        };
+        return true;
+      } else if (element.dni.length !== 8) {
+        this.mensajeError = {
+          title: "DNI INVALIDO",
+          message: "El DNI debe tener 8 dígitos.",
+          type: "warning",
+        };
+        return true;
       }
     },
     //FUNCION PARA REGISTRAR AL DEPENDIENTE
     crearDependiente(paciente) {
-      const datos = {
-        paciente: this.getUsuario,
-        dependiente: paciente,
+      if (this.camposVacios(this.dependiente)) {
+        this.$refs.simplert.openSimplert(this.getMensajeAdvertencia);
+      } else {
+        if (this.camposIncorrectos(paciente)) {
+          this.$refs.simplert.openSimplert(this.mensajeError);
+        } else {
+          const datos = {
+            paciente: this.getUsuario,
+            dependiente: paciente,
+          };
+          //LLAMA A LA CONSULTA REGISTRAR DEPENDIENTE DE PACIENTE.JS
+          this.registrarPacienteDependiente(datos).then((res) => {
+            this.$refs.simplert.openSimplert(this.getMensaje);
+            this.vaciar();
+          });
+        }
       }
-      //LLAMA A LA CONSULTA REGISTRAR DEPENDIENTE DE PACIENTE.JS
-      this.registrarPacienteDependiente(datos)
-      .then((res)=>{
-        this.$refs.simplert.openSimplert(this.getMensaje);
-        this.vaciar()
-      })
     },
   },
   computed: {
-    ...mapGetters(["getUsuario","getCarga","getMensaje"]),
+    ...mapGetters([
+      "getUsuario",
+      "getCarga",
+      "getMensaje",
+      "getMensajeAdvertencia",
+    ]),
   },
   mounted() {
     $("#sidebarCollapse").on("click", function() {
       $("#sidebar, #content").toggleClass("active");
       $(".collapse.in").toggleClass("in");
       $("a[aria-expanded=true]").attr("aria-expanded", "false");
-    });
-    document.getElementById("inputCMP").addEventListener("input", function() {
-      if (this.value.length > 9) this.value = this.value.slice(0, 9);
-    });
-    document.getElementById("inputDNI").addEventListener("input", function() {
-      if (this.value.length > 8) this.value = this.value.slice(0, 8);
     });
   },
 };
@@ -455,7 +497,7 @@ label {
 .foto img {
   width: 100px;
   height: 100%;
-
+  background: white;
   border-radius: 100%;
   box-shadow: 0 0 3px 3px #62bbe4;
   object-fit: cover;
