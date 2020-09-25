@@ -294,7 +294,7 @@ export default {
     getHorarioDoctor(id_doctor) {
       this.dia = [];
       this.horarios = [];
-      let url = `https://sicramv1.herokuapp.com/api/doctor/horarios/${id_doctor}`;
+      let url = `http://130.211.219.72/api/doctor/horarios/${id_doctor}`;
       this.axios
         .get(url)
         .then((res) => {

@@ -398,7 +398,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //INICIAR SESION DOCTOR 
 <span class="fstat-no" title="function not covered" >    lo</span>ginDoctor({commit,dispatch },doctor){
 <span class="cstat-no" title="statement not covered" >        return axios</span>
-        .post("https://sicramv1.herokuapp.com/api/signindoctor",{
+        .post("http://130.211.219.72/api/signindoctor",{
           ...doctor
         })
         .then(<span class="fstat-no" title="function not covered" >(r</span>es)=&gt;{
@@ -417,7 +417,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
 <span class="fstat-no" title="function not covered" >    lo</span>ginOrganizacion({commit,dispatch },organizacion){
         
 <span class="cstat-no" title="statement not covered" >        return axios</span>
-        .post("https://sicramv1.herokuapp.com/api/signinorganizacion",{
+        .post("http://130.211.219.72/api/signinorganizacion",{
           ...organizacion
         })
         .then(<span class="fstat-no" title="function not covered" >(r</span>es)=&gt;{
@@ -437,7 +437,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
 <span class="fstat-no" title="function not covered" >    lo</span>ginPaciente({commit,dispatch },paciente){
        
 <span class="cstat-no" title="statement not covered" >        return axios</span>
-        .post("https://sicramv1.herokuapp.com/api/signinuser",{
+        .post("http://130.211.219.72/api/signinuser",{
           ...paciente
         })
         .then(<span class="fstat-no" title="function not covered" >(r</span>es)=&gt;{
@@ -454,7 +454,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     },
     //CONSULTA DE LAS ESPECIALIDADES DEL SISTEMA
 <span class="fstat-no" title="function not covered" >    li</span>starEspecialidades({commit}){
-        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/especialidad`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`http://130.211.219.72/api/especialidad`;</span>
 <span class="cstat-no" title="statement not covered" >        return axios</span>
         .get(url) 
         .then(<span class="fstat-no" title="function not covered" >(r</span>es) =&gt; {
@@ -469,7 +469,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA PARA LA PRUEBA
 <span class="fstat-no" title="function not covered" >    es</span>pecialidadesPrueba(){
 <span class="cstat-no" title="statement not covered" >        return axios</span>
-        .get("https://sicramv1.herokuapp.com/api/especialidad") 
+        .get("http://130.211.219.72/api/especialidad")
         .then(<span class="fstat-no" title="function not covered" >re</span>s=&gt; 
 <span class="cstat-no" title="statement not covered" >            res.data</span>
         )

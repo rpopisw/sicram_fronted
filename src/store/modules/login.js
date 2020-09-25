@@ -47,7 +47,7 @@ const actions = {
     //INICIAR SESION DOCTOR 
     loginDoctor({commit,dispatch },doctor){
         return axios
-        .post("https://sicramv1.herokuapp.com/api/signindoctor",{
+        .post("http://130.211.219.72/api/signindoctor",{
           ...doctor
         })
         .then((res)=>{
@@ -67,7 +67,7 @@ const actions = {
     loginOrganizacion({commit,dispatch },organizacion){
         
         return axios
-        .post("https://sicramv1.herokuapp.com/api/signinorganizacion",{
+        .post("http://130.211.219.72/api/signinorganizacion",{
           ...organizacion
         })
         .then((res)=>{
@@ -89,7 +89,7 @@ const actions = {
     loginPaciente({commit,dispatch },paciente){
        
         return axios
-        .post("https://sicramv1.herokuapp.com/api/signinuser",{
+        .post("http://130.211.219.72/api/signinuser",{
           ...paciente
         })
         .then((res)=>{
@@ -107,7 +107,7 @@ const actions = {
     },
     //CONSULTA DE LAS ESPECIALIDADES DEL SISTEMA
     listarEspecialidades({commit}){
-        let url = `https://sicramv1.herokuapp.com/api/especialidad`;
+        let url = `http://130.211.219.72/api/especialidad`;
         return axios
         .get(url) 
         .then((res) => {
@@ -122,7 +122,7 @@ const actions = {
     //CONSULTA PARA LA PRUEBA
     especialidadesPrueba(){
         return axios
-        .get("https://sicramv1.herokuapp.com/api/especialidad") 
+        .get("http://130.211.219.72/api/especialidad")
         .then(res=> 
             res.data
         )
@@ -172,7 +172,7 @@ const actions = {
     //INGRESR CITA
     ingresarCita({commit},id_cita){    
         return axios
-        .post("https://sicramv1.herokuapp.com/api/cita/ingresar",
+        .post("http://130.211.219.72/api/cita/ingresar",
         {id_cita : id_cita})
         .then((res)=>{
             console.log(res)

@@ -220,7 +220,7 @@ export default {
       }
        else {
         this.axios
-          .post("https://sicramv1.herokuapp.com/api/signuporganizacion", {
+          .post("http://130.211.219.72/api/signuporganizacion", {
             ...this.organizacion,
           }) //elemento spreat
           //agrega al obejto json al contenido que agregamos, seria como un solo json de todos los parámetros

@@ -681,7 +681,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
 <span class="fstat-no" title="function not covered" >    ge</span>tPerfilPaciente({commit},paciente){
 <span class="cstat-no" title="statement not covered" >        console.log(paciente)</span>
         let url =
-<span class="cstat-no" title="statement not covered" >        `https://sicramv1.herokuapp.com/api/user/perfil/${paciente.id}`;</span>
+<span class="cstat-no" title="statement not covered" >        `http://130.211.219.72/api/user/perfil/${paciente.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        axios</span>
         .get(url, {
           headers: {
@@ -700,7 +700,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA DE ACTUALIZAR LOS DATOS DEL PACIENTE 
 <span class="fstat-no" title="function not covered" >    ac</span>tualizarDatosPaciente({commit},datos){
 <span class="cstat-no" title="statement not covered" >        commit('setCarga',true)</span>
-        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/user/perfil/update/${datos.paciente.id}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`http://130.211.219.72/api/user/perfil/update/${datos.paciente.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        return axios</span>
           .post(
             url,
@@ -729,7 +729,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA NUEVO PACIENTE DEPENDIENTE
 <span class="fstat-no" title="function not covered" >    re</span>gistrarPacienteDependiente({commit},datos){
 <span class="cstat-no" title="statement not covered" >        commit('setCarga',true)</span>
-        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/user/dependiente/agregar/${datos.paciente.id}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`http://130.211.219.72/api/user/dependiente/agregar/${datos.paciente.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        return axios</span>
           .post(
             url,
@@ -761,7 +761,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
 &nbsp;
     //CONSULTA LISTAR DEPENDIENTES
 <span class="fstat-no" title="function not covered" >    li</span>starDependientes({commit},paciente){
-        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/user/dependiente/listar/${paciente.id}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`http://130.211.219.72/api/user/dependiente/listar/${paciente.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        axios</span>
           .get(
             url,
@@ -788,7 +788,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA AGREGAR CITA DEL PACIENTE TITULAR
 <span class="fstat-no" title="function not covered" >    ag</span>regarCitaPaciente({commit},datos){
 <span class="cstat-no" title="statement not covered" >        commit('setCarga',true)</span>
-        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/user/cita/crear/${datos.paciente.id}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`http://130.211.219.72/api/user/cita/crear/${datos.paciente.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        return axios</span>
             .post(
               url,
@@ -821,7 +821,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA AGREGAR CITA DEL PACIENTE DEPENDIENTE
 <span class="fstat-no" title="function not covered" >    ag</span>regarCitaDependiente({commit},datos){
 <span class="cstat-no" title="statement not covered" >        commit('setCarga',true)</span>
-        let url = <span class="cstat-no" title="statement not covered" >`https://sicramv1.herokuapp.com/api/user/dependiente/cita/crear/${datos.idFamiliar}`;</span>
+        let url = <span class="cstat-no" title="statement not covered" >`http://130.211.219.72/api/user/dependiente/cita/crear/${datos.idFamiliar}`;</span>
 <span class="cstat-no" title="statement not covered" >        return axios</span>
             .post(
               url,
@@ -853,7 +853,7 @@ const actions = <span class="cstat-no" title="statement not covered" >{</span>
     //CONSULTA LISTAR CITAS 
 <span class="fstat-no" title="function not covered" >    li</span>stCitas({commit},paciente){
         let url =
-<span class="cstat-no" title="statement not covered" >        `https://sicramv1.herokuapp.com/api/user/cita/listar/${paciente.id}`;</span>
+<span class="cstat-no" title="statement not covered" >        `http://130.211.219.72/api/user/cita/listar/${paciente.id}`;</span>
 <span class="cstat-no" title="statement not covered" >        axios</span>
         .get(url, {
           headers: {

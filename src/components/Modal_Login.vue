@@ -303,7 +303,7 @@ export default {
         this.carga2 = false;
       } else {
         this.axios
-          .post("https://sicramv1.herokuapp.com/api/signupuser", {
+          .post("http://130.211.219.72/api/signupuser", {
             ...user,
           }) //elemento spreat
           //agrega al obejto json al contenido que agregamos, seria como un solo json de todos los parámetros
